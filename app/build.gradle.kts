@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.hilt.android.gradle)
     alias(libs.plugins.detekt)
     alias(libs.plugins.kotlinx.kover)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -62,6 +63,12 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     //Detekt
     detektPlugins(libs.detekt.formatting)
+    // Firebase BoM
+    implementation(platform(libs.firebase.bom))
+    // Firebase Authentication
+    implementation(libs.firebase.auth.ktx)
+    // Cloud Firestore
+    implementation(libs.firebase.firestore.ktx)
 
     testImplementation(libs.junit)
 

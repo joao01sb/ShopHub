@@ -1,4 +1,4 @@
-package com.joao01sb.shophub.ui.theme
+package com.joao01sb.shophub.shared_ui.theme
 
 import androidx.compose.ui.graphics.Color
 
