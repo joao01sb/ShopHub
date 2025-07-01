@@ -69,6 +69,8 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     // Cloud Firestore
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.kotlinx.coroutines.play.services)
+
 
     testImplementation(libs.junit)
 
