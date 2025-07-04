@@ -25,15 +25,12 @@ import jakarta.inject.Singleton
 object AuthModule {
 
     @Provides
-    @Singleton
     fun provideFirebaseAuth(): FirebaseAuth = Firebase.auth
 
     @Provides
-    @Singleton
     fun provideFirebaseFirestore(): FirebaseFirestore = Firebase.firestore
 
     @Provides
-    @Singleton
     fun provideAuthRemoteDataSource(
         firebaseAuth: FirebaseAuth
     ) : AuthRemoteDataSource {
@@ -41,7 +38,6 @@ object AuthModule {
     }
 
     @Provides
-    @Singleton
     fun provideAuthRepository(
         authRemoteDataSource: AuthRemoteDataSource,
         firestore: FirebaseFirestore
@@ -50,7 +46,6 @@ object AuthModule {
     }
 
     @Provides
-    @Singleton
     fun provideRegisterUserCase(
         repository: AuthRepository
     ) : RegisterUseCase {
@@ -58,7 +53,6 @@ object AuthModule {
     }
 
     @Provides
-    @Singleton
     fun provideLogoutUseCase(
         repository: AuthRepository
     ) : LogoutUseCase {
@@ -66,7 +60,6 @@ object AuthModule {
     }
 
     @Provides
-    @Singleton
     fun provideLoginUseCase(
         repository: AuthRepository
     ) : LoginUseCase {
@@ -74,7 +67,6 @@ object AuthModule {
     }
 
     @Provides
-    @Singleton
     fun provideIsUserLoggedInUseCase(
         repository: AuthRepository
     ) : IsUserLoggedInUseCase {
@@ -82,7 +74,6 @@ object AuthModule {
     }
 
     @Provides
-    @Singleton
     fun provideGetCurrentUserIdUseCase(
         repository: AuthRepository
     ) : GetCurrentUserIdUseCase {
