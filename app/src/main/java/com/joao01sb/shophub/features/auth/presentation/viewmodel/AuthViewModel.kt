@@ -2,13 +2,13 @@ package com.joao01sb.shophub.features.auth.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.joao01sb.shophub.core.utils.auth.AuthEvent
-import com.joao01sb.shophub.core.utils.auth.AuthUiEvent
+import com.joao01sb.shophub.features.auth.presentation.event.AuthEvent
+import com.joao01sb.shophub.features.auth.presentation.event.AuthUiEvent
+import com.joao01sb.shophub.features.auth.domain.usecase.IsUserLoggedInUseCase
 import com.joao01sb.shophub.features.auth.domain.usecase.LoginUseCase
 import com.joao01sb.shophub.features.auth.domain.usecase.RegisterUseCase
 import com.joao01sb.shophub.features.auth.presentation.state.AuthUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,20 +16,27 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
-    private val registerUseCase: RegisterUseCase
+    private val registerUseCase: RegisterUseCase,
+    private val isUserLoggedInUseCase: IsUserLoggedInUseCase
 ) : ViewModel() {
 
     private var _uiState: MutableStateFlow<AuthUiState> = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
-    private val _uiEvent = MutableSharedFlow< AuthUiEvent>()
+    private val _uiEvent = MutableSharedFlow<AuthUiEvent>()
     val uiEvent = _uiEvent.asSharedFlow()
 
+    private val _isAuthenticated = MutableStateFlow(false)
+    val isAuthenticated: StateFlow<Boolean> = _isAuthenticated.asStateFlow()
 
+    init {
+        checkAuthStatus()
+    }
 
     fun onEvent(event: AuthEvent) {
         when (event) {
@@ -38,9 +45,7 @@ class AuthViewModel @Inject constructor(
             }
 
             is AuthEvent.PasswordChanged -> _uiState.update { currentState ->
-                currentState.copy(
-                    password = event.password
-                )
+                currentState.copy(password = event.password)
             }
 
             is AuthEvent.NameChanged -> _uiState.update { currentState ->
@@ -49,27 +54,47 @@ class AuthViewModel @Inject constructor(
 
             is AuthEvent.Login -> login()
             is AuthEvent.Register -> register()
-            is AuthEvent.SingUp -> singUp()
+            is AuthEvent.SingUp -> {
+                viewModelScope.launch {
+                    clearState()
+                    _uiEvent.emit(AuthUiEvent.NavigateToRegister)
+                }
+            }
+            is AuthEvent.NavigateToLogin -> {
+                viewModelScope.launch {
+                    _uiEvent.emit(AuthUiEvent.NavigateToLogin)
+                }
+            }
         }
     }
 
-    private fun singUp() {
+    private fun checkAuthStatus() {
         viewModelScope.launch {
-            _uiEvent.emit(AuthUiEvent.NavigateToRegister)
+            isUserLoggedInUseCase()
+                .onSuccess { isLoggedIn ->
+                    _isAuthenticated.value = isLoggedIn
+                    if (isLoggedIn) {
+                        _uiEvent.emit(AuthUiEvent.NavigateToHome)
+                    }
+                }
+                .onFailure {
+                    _isAuthenticated.value = false
+                }
         }
     }
 
     private fun login() {
         viewModelScope.launch {
             _uiState.update { currentState ->
-                currentState.copy(isLoading = true)
+                currentState.copy(isLoading = true, error = null)
             }
+
             loginUseCase(email = uiState.value.email, password = uiState.value.password)
-                .onFailure {
+                .onFailure { exception ->
                     _uiState.update { currentState ->
                         currentState.copy(
                             isLoading = false,
-                            error = it.message
+                            error = exception.message
                         )
                     }
                 }
@@ -80,35 +105,40 @@ class AuthViewModel @Inject constructor(
                             error = null
                         )
                     }
+                    _isAuthenticated.value = true
                     _uiEvent.emit(AuthUiEvent.NavigateToHome)
                 }
         }
     }
 
-
     private fun register() {
         viewModelScope.launch {
             _uiState.update { currentState ->
-                currentState.copy(isLoading = true)
+                currentState.copy(isLoading = true, error = null)
             }
+
             registerUseCase(uiState.value.email, uiState.value.password, uiState.value.name)
-                .onFailure {
+                .onFailure { exception ->
                     _uiState.update { currentState ->
                         currentState.copy(
                             isLoading = false,
-                            error = it.message
+                            error = exception.message
                         )
                     }
                 }
                 .onSuccess {
                     _uiState.update { currentState ->
                         currentState.copy(
-                            isLoading = false
+                            isLoading = false,
+                            error = null
                         )
                     }
                     _uiEvent.emit(AuthUiEvent.NavigateToLogin)
                 }
         }
+    }
 
+    fun clearState() {
+        _uiState.value = AuthUiState()
     }
 }
