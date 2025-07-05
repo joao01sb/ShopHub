@@ -8,6 +8,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.joao01sb.shophub.core.navigation.graphs.authGraph
+import com.joao01sb.shophub.core.navigation.graphs.homeGraph
 import com.joao01sb.shophub.features.auth.presentation.event.AuthUiEvent
 import com.joao01sb.shophub.features.auth.presentation.viewmodel.AuthViewModel
 
@@ -43,5 +44,6 @@ fun NavigationGraph(
         startDestination = startDestination
     ) {
         authGraph(authViewModel)
+        homeGraph(navController)
     }
 }
