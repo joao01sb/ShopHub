@@ -14,6 +14,7 @@ import com.joao01sb.shophub.features.auth.presentation.viewmodel.AuthViewModel
 fun NavGraphBuilder.authGraph(
     authViewModel: AuthViewModel
 ) {
+
     navigation<Routes.AuthGraph>(
         startDestination = Routes.Login
     ) {

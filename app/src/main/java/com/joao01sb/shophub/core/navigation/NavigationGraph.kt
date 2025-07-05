@@ -1,4 +1,3 @@
-// navigation/NavigationGraph.kt
 package com.joao01sb.shophub.core.navigation
 
 import androidx.compose.runtime.Composable
@@ -44,6 +43,5 @@ fun NavigationGraph(
         startDestination = startDestination
     ) {
         authGraph(authViewModel)
-
     }
 }

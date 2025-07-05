@@ -1,5 +1,6 @@
 package com.joao01sb.shophub.features.auth.presentation.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,9 +20,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -43,6 +46,14 @@ fun RegisterScreen(
     onClickRegister: () -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
+
+    val currentContext = LocalContext.current
+
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let { error ->
+            Toast.makeText(currentContext, "Erro: $error", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Column(
         modifier = Modifier
