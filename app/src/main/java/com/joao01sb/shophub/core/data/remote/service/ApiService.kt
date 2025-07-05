@@ -1,9 +1,9 @@
-package com.joao01sb.shophub.core.data.remote
+package com.joao01sb.shophub.core.data.remote.service
 
-import androidx.compose.ui.graphics.Path
-import com.joao01sb.shophub.core.data.remote.dto.PaginatedProductsResponse
+import com.joao01sb.shophub.core.data.remote.dto.PaginatedResponse
 import com.joao01sb.shophub.core.data.remote.dto.ProductDto
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
@@ -12,7 +12,7 @@ interface ApiService {
     suspend fun getAllProducts(
         @Query("limit") limit: Int,
         @Query("skip") skip: Int
-    ): PaginatedProductsResponse
+    ): PaginatedResponse<ProductDto>
 
     @GET("products/{id}")
     suspend fun getProductById(@Path("id") productId: Int): ProductDto

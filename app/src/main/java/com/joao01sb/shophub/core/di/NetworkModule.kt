@@ -1,7 +1,7 @@
 package com.joao01sb.shophub.core.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.joao01sb.shophub.core.data.remote.ApiService
+import com.joao01sb.shophub.core.data.remote.service.ApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
