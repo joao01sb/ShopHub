@@ -72,6 +72,12 @@ dependencies {
     // Cloud Firestore
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.kotlinx.coroutines.play.services)
+    //Retrofit
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.converter.kotlinx.serialization)
+    // OkHttp
+    implementation(libs.okhttp.core)
+    implementation(libs.okhttp.logging.interceptor)
 
 
     testImplementation(libs.junit)
