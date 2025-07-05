@@ -133,6 +133,7 @@ class AuthViewModel @Inject constructor(
                             error = null
                         )
                     }
+                    clearState()
                     _uiEvent.emit(AuthUiEvent.NavigateToLogin)
                 }
         }
