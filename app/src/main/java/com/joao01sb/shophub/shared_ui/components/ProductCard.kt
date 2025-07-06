@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -45,9 +46,11 @@ fun ProductCard(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.clickable { onClick(product.id) },
+        modifier = modifier
+            .height(260.dp)
+            .clickable { onClick(product.id) },
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = CardDefaults.shape
+        shape  = RectangleShape
     ) {
 
         Column {
