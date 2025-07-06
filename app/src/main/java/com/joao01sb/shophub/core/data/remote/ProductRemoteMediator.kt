@@ -11,9 +11,11 @@ import com.joao01sb.shophub.core.data.local.entities.RemoteKeysEntity
 import com.joao01sb.shophub.core.data.mapper.toEntity
 import com.joao01sb.shophub.core.domain.datasource.ProductLocalDataSource
 import com.joao01sb.shophub.core.domain.datasource.ProductRemoteDataSource
-import jakarta.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
+import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
 class ProductRemoteMediator @Inject constructor(
@@ -53,31 +55,37 @@ class ProductRemoteMediator @Inject constructor(
             val products = response.products
             val endOfPaginationReached = products.size < state.config.pageSize
 
-            database.withTransaction {
-                if (loadType == LoadType.REFRESH) {
-                    productLocalDataSource.clearProducts()
-                    productLocalDataSource.clearRemoteKeys()
+            withContext(Dispatchers.IO) {
+                database.withTransaction {
+                    if (loadType == LoadType.REFRESH) {
+                        database.remoteKeysDao().clearRemoteKeys()
+                        database.productDao().clearProducts()
+                    }
+
+                    val prevKey = if (currentPage > 0) currentPage - 1 else null
+                    val nextKey = if (endOfPaginationReached) null else currentPage + 1
+
+                    val remoteKeys = products.map { product ->
+                        RemoteKeysEntity(
+                            productId = product.id,
+                            prevKey = prevKey,
+                            nextKey = nextKey
+                        )
+                    }
+
+                    database.productDao().insertProducts(products.map { it.toEntity() })
+
+                    database.remoteKeysDao().insertRemoteKeys(remoteKeys)
                 }
-
-                val prevKey = if (currentPage > 0) currentPage - 1 else null
-                val nextKey = if (endOfPaginationReached) null else currentPage + 1
-
-                val remoteKeys = products.map { product ->
-                    RemoteKeysEntity(
-                        productId = product.id,
-                        prevKey = prevKey,
-                        nextKey = nextKey
-                    )
-                }
-
-                productLocalDataSource.insertProducts(products.map { it.toEntity() })
-                productLocalDataSource.insertRemoteKeys(remoteKeys)
             }
 
             MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (e: IOException) {
             MediatorResult.Error(e)
         } catch (e: HttpException) {
+            MediatorResult.Error(e)
+        } catch (e: Exception) {
+            e.printStackTrace()
             MediatorResult.Error(e)
         }
     }

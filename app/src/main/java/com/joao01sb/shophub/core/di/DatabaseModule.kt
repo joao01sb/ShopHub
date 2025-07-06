@@ -10,13 +10,14 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import jakarta.inject.Singleton
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
     @Provides
+    @Singleton
     fun provideShopHubDatabase(@ApplicationContext context: Context): ShopHubDatabase {
         return Room.databaseBuilder(
             context,
