@@ -49,7 +49,6 @@ fun TopAppBarCustom(
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Ícone de voltar
             Box(
                 modifier = Modifier
                     .size(40.dp)
@@ -67,7 +66,6 @@ fun TopAppBarCustom(
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // Título
             Text(
                 text = title,
                 fontSize = 18.sp,
@@ -76,7 +74,6 @@ fun TopAppBarCustom(
             )
         }
 
-        // Divider
         HorizontalDivider(
             color = Color.Gray.copy(alpha = 0.3f),
             thickness = 1.dp
