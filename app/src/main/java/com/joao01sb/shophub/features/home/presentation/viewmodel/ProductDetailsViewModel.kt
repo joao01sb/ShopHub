@@ -1,5 +1,6 @@
 package com.joao01sb.shophub.features.home.presentation.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joao01sb.shophub.features.home.domain.usecase.GetProductByIdUseCase
@@ -13,17 +14,24 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ProductDetailsViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getProductByIdUseCase: GetProductByIdUseCase
 ) : ViewModel() {
+
+    val userId: Int = checkNotNull(savedStateHandle["idUser"]) { "Missing id argument" }
 
     private val _uiState = MutableStateFlow(ProductDetailsUiState())
     val uiState: StateFlow<ProductDetailsUiState> = _uiState.asStateFlow()
 
-    fun getProductById(id: Int) {
+    init {
+        getProductById()
+    }
+
+    private fun getProductById() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             
-            getProductByIdUseCase(id)
+            getProductByIdUseCase(userId)
                 .onSuccess { product ->
                     _uiState.value = _uiState.value.copy(
                         product = product,
