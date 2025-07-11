@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.joao01sb.shophub.core.data.local.ShopHubDatabase
 import com.joao01sb.shophub.core.data.local.dao.ProductDao
+import com.joao01sb.shophub.core.data.local.dao.RecentSearchDao
 import com.joao01sb.shophub.core.data.local.dao.RemoteKeysDao
 import dagger.Module
 import dagger.Provides
@@ -35,4 +36,10 @@ object DatabaseModule {
     fun provideRemoteKeysDao(database: ShopHubDatabase): RemoteKeysDao {
         return database.remoteKeysDao()
     }
+
+    @Provides
+    fun provideRecentSearchDao(database: ShopHubDatabase): RecentSearchDao {
+        return database.recentSearchDao()
+    }
+
 }
