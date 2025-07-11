@@ -38,7 +38,7 @@ fun TopAppBarCustom(
     title: String = "Title",
     navigationIcon: ImageVector = Icons.Default.ArrowBack,
     onNavigationClick: () -> Unit = {},
-    backgroundColor: Color = Color.White,
+    backgroundColor: Color = Color.DarkGray,
     contentColor: Color = Color.Black
 ) {
     Column {
