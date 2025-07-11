@@ -16,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -37,7 +38,19 @@ fun SearchProductScreen(
     onBackClick: () -> Unit,
     onRetry: () -> Unit,
     onRecentSearchClick: (String) -> Unit,
+    onHasResults: (Boolean) -> Unit,
 ) {
+
+    LaunchedEffect(products.loadState) {
+        when (products.loadState.refresh) {
+            is LoadState.NotLoading -> {
+                if (products.itemCount > 0) {
+                    onHasResults(true)
+                }
+            }
+            else -> {}
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize()
