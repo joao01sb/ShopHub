@@ -1,0 +1,174 @@
+package com.joao01sb.shophub.features.cart.presentation.components
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.outlined.AccountBox
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.joao01sb.shophub.core.utils.formatCardDate
+import com.joao01sb.shophub.core.utils.formatCardNumber
+import com.joao01sb.shophub.features.cart.domain.model.CheckoutInfo
+
+@Composable
+fun CardPaymentSection(
+    checkoutInfo: CheckoutInfo,
+    onCheckoutInfoChange: (CheckoutInfo) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.AccountBox,
+                    contentDescription = "credit card",
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = "Card Details",
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(20.dp))
+            
+            OutlinedTextField(
+                value = checkoutInfo.numberCard,
+                onValueChange = { newValue ->
+                    val formatted = formatCardNumber(newValue)
+                    onCheckoutInfoChange(checkoutInfo.copy(numberCard = formatted))
+                },
+                label = { Text("Card number") },
+                placeholder = { Text("1234 5678 9012 3456") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.AccountBox,
+                        contentDescription = "Card",
+                    )
+                },
+                singleLine = true
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            OutlinedTextField(
+                value = checkoutInfo.nameCard,
+                onValueChange = { newValue ->
+                    onCheckoutInfoChange(checkoutInfo.copy(nameCard = newValue.uppercase()))
+                },
+                label = { Text("Name on Card") },
+                placeholder = { Text("JOÃO SILVA") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    capitalization = KeyboardCapitalization.Characters
+                ),
+                singleLine = true
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                OutlinedTextField(
+                    value = checkoutInfo.dateCard,
+                    onValueChange = { newValue ->
+                        val formatted = formatCardDate(newValue)
+                        onCheckoutInfoChange(checkoutInfo.copy(dateCard = formatted))
+                    },
+                    label = { Text("Validity") },
+                    placeholder = { Text("MM/AA") },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.DateRange,
+                            contentDescription = "Date",
+                        )
+                    },
+                    singleLine = true
+                )
+                
+                OutlinedTextField(
+                    value = checkoutInfo.cvvCard,
+                    onValueChange = { newValue ->
+                        if (newValue.length <= 3) {
+                            onCheckoutInfoChange(checkoutInfo.copy(cvvCard = newValue))
+                        }
+                    },
+                    label = { Text("CVV") },
+                    placeholder = { Text("123") },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = "Security",
+                        )
+                    },
+                    singleLine = true
+                )
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun CardPaymentSectionPreview() {
+    CardPaymentSection(
+        checkoutInfo = CheckoutInfo(
+            fullName = "João Silva",
+            phoneNumber = "(11) 99999-9999",
+            numberCard = "1234 5678 9012 3456",
+            nameCard = "JOÃO SILVA",
+            dateCard = "12/25",
+            cvvCard = "123"
+        ),
+        onCheckoutInfoChange = {}
+    )
+}
