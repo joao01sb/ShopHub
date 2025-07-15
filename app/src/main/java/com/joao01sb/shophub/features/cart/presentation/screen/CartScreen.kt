@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.joao01sb.shophub.core.domain.model.CartItem
 import com.joao01sb.shophub.features.cart.presentation.components.BottomBarCart
 import com.joao01sb.shophub.features.cart.presentation.components.CartItemCard
 import com.joao01sb.shophub.features.cart.presentation.state.CartUiState
@@ -18,8 +19,8 @@ import com.joao01sb.shophub.shared_ui.components.TopAppBarCustom
 @Composable
 fun CartScreen(
     uiState: CartUiState,
-    onQuantityChange: (Int) -> Unit,
-    onRemoveItem: () -> Unit,
+    onQuantityChange: (CartItem, Int) -> Unit,
+    onRemoveItem: (CartItem) -> Unit,
     onCheckout: () -> Unit,
     onBack: () -> Unit,
     onRetry: () -> Unit,
@@ -68,10 +69,10 @@ fun CartScreen(
                         CartItemCard(
                             item = item,
                             onQuantityChange = { newQuantity ->
-                                onQuantityChange(newQuantity)
+                                onQuantityChange(item,newQuantity)
                             },
                             onRemoveItem = {
-                                onRemoveItem()
+                                onRemoveItem(item)
                             }
                         )
                     }
