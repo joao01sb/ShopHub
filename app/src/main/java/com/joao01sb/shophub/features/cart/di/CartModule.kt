@@ -1,5 +1,7 @@
 package com.joao01sb.shophub.features.cart.di
 
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -8,9 +10,10 @@ import com.joao01sb.shophub.features.cart.data.repository.CartRepositoryImp
 import com.joao01sb.shophub.features.cart.domain.datasource.CartRemoteDataSource
 import com.joao01sb.shophub.features.cart.domain.model.CheckoutInfo
 import com.joao01sb.shophub.features.cart.domain.repository.CartRepository
-import com.joao01sb.shophub.features.cart.domain.usecase.AddCartItemUseCase
+import com.joao01sb.shophub.features.cart.domain.usecase.UpdateItemUseCase
 import com.joao01sb.shophub.features.cart.domain.usecase.ClearCartUseCase
 import com.joao01sb.shophub.features.cart.domain.usecase.GetCartItemsUseCase
+import com.joao01sb.shophub.features.cart.domain.usecase.GetCurrentUserIdLoggedUseCase
 import com.joao01sb.shophub.features.cart.domain.usecase.PlaceOrderUseCase
 import com.joao01sb.shophub.features.cart.domain.usecase.RemoveCartItemUseCase
 import com.joao01sb.shophub.features.cart.domain.usecase.ValidateCheckoutInfoUseCase
@@ -26,12 +29,15 @@ object CartModule {
 
     @Provides
     fun provideFirebaseFirestore(): FirebaseFirestore = Firebase.firestore
+    @Provides
+    fun provideFirebaseAuth(): FirebaseAuth = Firebase.auth
 
     @Provides
     fun provideCartRemoteDataSource(
-        firestore: FirebaseFirestore
+        firestore: FirebaseFirestore,
+        firebaseAuth: FirebaseAuth
     ) : CartRemoteDataSource {
-        return CartRemoteDataSourceImpl(firestore)
+        return CartRemoteDataSourceImpl(firestore, firebaseAuth)
     }
 
     @Provides
@@ -49,10 +55,10 @@ object CartModule {
     }
 
     @Provides
-    fun provideAddCartItemUseCase(
+    fun provideUpdateItemUseCase(
         cartRepository: CartRepository
-    ) : AddCartItemUseCase {
-        return AddCartItemUseCase(cartRepository)
+    ) : UpdateItemUseCase {
+        return UpdateItemUseCase(cartRepository)
     }
 
     @Provides
@@ -83,4 +89,10 @@ object CartModule {
         return ValidateCheckoutInfoUseCase(checkoutInfo)
     }
 
+    @Provides
+    fun provideGetCurrentUserIdLoggedUseCase(
+        cartRepository: CartRepository
+    ) : GetCurrentUserIdLoggedUseCase {
+        return GetCurrentUserIdLoggedUseCase(cartRepository)
+    }
 }

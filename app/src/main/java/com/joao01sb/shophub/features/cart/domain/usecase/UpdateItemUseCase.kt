@@ -3,13 +3,14 @@ package com.joao01sb.shophub.features.cart.domain.usecase
 import com.joao01sb.shophub.core.domain.model.CartItem
 import com.joao01sb.shophub.features.cart.domain.repository.CartRepository
 
-class AddCartItemUseCase(
+class UpdateItemUseCase(
     private val cartRepository: CartRepository
 ) {
 
-    suspend operator fun invoke(userId: String, item: CartItem) : Result<Unit> {
+    suspend operator fun invoke(userId: String, item: CartItem, quantity: Int) : Result<Unit> {
         return try {
-            cartRepository.addOrUpdateItem(userId, item)
+            val updatedItem = item.copy(quantidade = quantity)
+            cartRepository.updateItem(userId, updatedItem)
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)

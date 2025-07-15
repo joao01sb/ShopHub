@@ -1,29 +1,45 @@
 package com.joao01sb.shophub.features.cart.data.datasource
 
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joao01sb.shophub.core.domain.model.CartItem
 import com.joao01sb.shophub.core.domain.model.Order
 import com.joao01sb.shophub.features.cart.domain.datasource.CartRemoteDataSource
 import com.joao01sb.shophub.features.cart.domain.model.CheckoutInfo
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
 
 class CartRemoteDataSourceImpl(
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val firebaseAuth: FirebaseAuth
 ) : CartRemoteDataSource {
 
-    override suspend fun getCartItems(userId: String): List<CartItem> {
-        val snapshot = firestore
+    override fun observeCartItems(userId: String): Flow<List<CartItem>> = callbackFlow {
+        val listener = firestore
             .collection("users")
             .document(userId)
             .collection("cart")
-            .get()
-            .await()
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    cancel("Erro ao ouvir carrinho", error)
+                    return@addSnapshotListener
+                }
 
-        return snapshot.documents.mapNotNull { it.toObject(CartItem::class.java) }
+                val items = snapshot?.documents
+                    ?.mapNotNull { it.toObject(CartItem::class.java) }
+                    .orEmpty()
+
+                trySend(items).isSuccess
+            }
+
+        awaitClose { listener.remove() }
     }
 
-    override suspend fun addOrUpdateItem(userId: String, item: CartItem) {
+    override suspend fun updateItem(userId: String, item: CartItem) {
         firestore
             .collection("users")
             .document(userId)
@@ -78,5 +94,9 @@ class CartRemoteDataSourceImpl(
             .document(orderId)
             .set(order)
             .await()
+    }
+
+    override fun getCurrentUserId(): String? {
+        return firebaseAuth.currentUser?.uid
     }
 }

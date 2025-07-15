@@ -4,19 +4,21 @@ import com.joao01sb.shophub.core.domain.model.CartItem
 import com.joao01sb.shophub.features.cart.domain.datasource.CartRemoteDataSource
 import com.joao01sb.shophub.features.cart.domain.model.CheckoutInfo
 import com.joao01sb.shophub.features.cart.domain.repository.CartRepository
+import kotlinx.coroutines.flow.Flow
 
 class CartRepositoryImp(
     private val remoteDataSource: CartRemoteDataSource
 ) : CartRepository {
-    override suspend fun getCartItems(userId: String): List<CartItem> {
-        return remoteDataSource.getCartItems(userId)
+
+    override fun observeCartItems(userId: String): Flow<List<CartItem>> {
+        return remoteDataSource.observeCartItems(userId)
     }
 
-    override suspend fun addOrUpdateItem(
+    override suspend fun updateItem(
         userId: String,
         item: CartItem
     ) {
-        remoteDataSource.addOrUpdateItem(userId, item)
+        remoteDataSource.updateItem(userId, item)
     }
 
     override suspend fun removeItem(userId: String, productId: String) {
@@ -33,5 +35,9 @@ class CartRepositoryImp(
         info: CheckoutInfo
     ) {
         remoteDataSource.placeOrder(userId, items, info)
+    }
+
+    override fun getCurrentUserId(): String? {
+        return remoteDataSource.getCurrentUserId()
     }
 }
