@@ -1,6 +1,7 @@
 package com.joao01sb.shophub.features.cart.presentation.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,26 +11,45 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -101,8 +121,8 @@ fun CartItemCard(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         QuantitySelector(
-                            quantity = item.quantidade,
-                            onQuantityChange = onQuantityChange,
+                            selectedQuantity = item.quantidade,
+                            onQuantitySelected = onQuantityChange,
                             modifier = Modifier.wrapContentWidth()
                         )
 
@@ -192,72 +212,144 @@ fun ProductImage(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuantitySelector(
-    quantity: Int,
-    onQuantityChange: (Int) -> Unit,
+    selectedQuantity: Int,
+    maxQuantity: Int = 10,
+    onQuantitySelected: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        IconButton(
-            onClick = {
-                if (quantity > 1) {
-                    onQuantityChange(quantity - 1)
-                }
-            },
-            modifier = Modifier.size(32.dp),
-            enabled = quantity > 1
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(32.dp)
-                    .clip(CircleShape)
-                    .background(
-                        if (quantity > 1)
-                            Color.DarkGray
-                        else
-                            Color.Gray.copy(alpha = 0.5f)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Decrement",
-                    tint = Color.White,
-                )
-            }
-        }
+    val bottomSheetState = rememberModalBottomSheetState()
+    var showBottomSheet by remember { mutableStateOf(false) }
 
-        Text(
-            text = quantity.toString(),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.widthIn(min = 24.dp),
-            textAlign = TextAlign.Center
+    OutlinedButton(
+        onClick = { showBottomSheet = true },
+        modifier = modifier.widthIn(max = 160.dp),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = MaterialTheme.colorScheme.onSurface
         )
+    ) {
+        Text(
+            text = "$selectedQuantity ${if (selectedQuantity == 1) "unit" else "units"}",
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Icon(
+            imageVector = Icons.Default.KeyboardArrowDown,
+            contentDescription = "Select quantity",
+            modifier = Modifier.size(16.dp)
+        )
+    }
 
-        IconButton(
-            onClick = { onQuantityChange(quantity + 1) },
-            modifier = Modifier.size(32.dp)
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet = false },
+            sheetState = bottomSheetState,
+            dragHandle = {
+                Surface(
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .width(32.dp)
+                        .height(4.dp),
+                    shape = RoundedCornerShape(2.dp),
+                    color = Color.Gray
+                ) {}
+            }
         ) {
-            Box(
+            Column(
                 modifier = Modifier
-                    .size(32.dp)
-                    .clip(CircleShape)
-                    .background(Color.Gray),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add",
-                    tint = Color.White,
-                    modifier = Modifier.size(16.dp)
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Select a quantity",
+                        fontWeight = FontWeight.Medium
+                    )
+
+                    IconButton(
+                        onClick = { showBottomSheet = false }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Close"
+                        )
+                    }
+                }
+
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+
+                LazyColumn(
+                    modifier = Modifier.heightIn(max = 400.dp)
+                ) {
+                    items((1..maxQuantity).toList()) { quantity ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    onQuantitySelected(quantity)
+                                    showBottomSheet = false
+                                }
+                                .padding(horizontal = 16.dp, vertical = 16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "$quantity ${if (quantity == 1) "unit" else "units"}",
+                                color = if (quantity == selectedQuantity)
+                                    Color.Red
+                                else
+                                    Color.Black
+                            )
+
+                            if (quantity == selectedQuantity) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(8.dp)
+                                        .background(
+                                            Color.Gray,
+                                            CircleShape
+                                        )
+                                )
+                            }
+                        }
+
+                        if (quantity != maxQuantity) {
+                            HorizontalDivider(
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
+                    }
+
+                    if (maxQuantity > 6) {
+                        item {
+                            HorizontalDivider(
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        showBottomSheet = false
+                                    }
+                                    .padding(horizontal = 16.dp, vertical = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "More than $maxQuantity units",
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -268,11 +360,11 @@ fun QuantitySelector(
 private fun CartItemCardPreview() {
     CartItemCard(
         item = CartItem(
-        nome = "produto de teste",
-        quantidade = 3,
-        precoUni = 10.0,
-        precoTotal = 30.0,
-        categoria = "categoria de teste",
-        imageUrl = ""
-    ), onQuantityChange = {}, onRemoveItem = {})
+            nome = "produto de teste",
+            quantidade = 3,
+            precoUni = 10.0,
+            precoTotal = 30.0,
+            categoria = "categoria de teste",
+            imageUrl = ""
+        ), onQuantityChange = {}, onRemoveItem = {})
 }
