@@ -28,11 +28,6 @@ import dagger.hilt.components.SingletonComponent
 object CartModule {
 
     @Provides
-    fun provideFirebaseFirestore(): FirebaseFirestore = Firebase.firestore
-    @Provides
-    fun provideFirebaseAuth(): FirebaseAuth = Firebase.auth
-
-    @Provides
     fun provideCartRemoteDataSource(
         firestore: FirebaseFirestore,
         firebaseAuth: FirebaseAuth

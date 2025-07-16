@@ -25,12 +25,6 @@ import jakarta.inject.Singleton
 object AuthModule {
 
     @Provides
-    fun provideFirebaseAuth(): FirebaseAuth = Firebase.auth
-
-    @Provides
-    fun provideFirebaseFirestore(): FirebaseFirestore = Firebase.firestore
-
-    @Provides
     fun provideAuthRemoteDataSource(
         firebaseAuth: FirebaseAuth
     ) : AuthRemoteDataSource {
