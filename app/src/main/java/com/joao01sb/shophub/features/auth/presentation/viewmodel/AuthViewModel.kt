@@ -2,6 +2,7 @@ package com.joao01sb.shophub.features.auth.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joao01sb.shophub.core.domain.manager.AuthManager
 import com.joao01sb.shophub.features.auth.presentation.event.AuthEvent
 import com.joao01sb.shophub.features.auth.presentation.event.AuthUiEvent
 import com.joao01sb.shophub.features.auth.domain.usecase.IsUserLoggedInUseCase
@@ -20,9 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase,
-    private val registerUseCase: RegisterUseCase,
-    private val isUserLoggedInUseCase: IsUserLoggedInUseCase
+    private val authManager: AuthManager
 ) : ViewModel() {
 
     private var _uiState: MutableStateFlow<AuthUiState> = MutableStateFlow(AuthUiState())
@@ -70,7 +69,7 @@ class AuthViewModel @Inject constructor(
 
     private fun checkAuthStatus() {
         viewModelScope.launch {
-            isUserLoggedInUseCase()
+            authManager.isUserLoggedIn()
                 .onSuccess { isLoggedIn ->
                     _isAuthenticated.value = isLoggedIn
                     if (isLoggedIn) {
@@ -89,7 +88,7 @@ class AuthViewModel @Inject constructor(
                 currentState.copy(isLoading = true, error = null)
             }
 
-            loginUseCase(email = uiState.value.email, password = uiState.value.password)
+            authManager.loginUser(email = uiState.value.email, password = uiState.value.password)
                 .onFailure { exception ->
                     _uiState.update { currentState ->
                         currentState.copy(
@@ -117,7 +116,7 @@ class AuthViewModel @Inject constructor(
                 currentState.copy(isLoading = true, error = null)
             }
 
-            registerUseCase(uiState.value.email, uiState.value.password, uiState.value.name)
+            authManager.registerUser(uiState.value.email, uiState.value.password, uiState.value.name)
                 .onFailure { exception ->
                     _uiState.update { currentState ->
                         currentState.copy(

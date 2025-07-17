@@ -13,7 +13,6 @@ import com.joao01sb.shophub.features.cart.domain.repository.CartRepository
 import com.joao01sb.shophub.features.cart.domain.usecase.UpdateItemUseCase
 import com.joao01sb.shophub.features.cart.domain.usecase.ClearCartUseCase
 import com.joao01sb.shophub.features.cart.domain.usecase.GetCartItemsUseCase
-import com.joao01sb.shophub.features.cart.domain.usecase.GetCurrentUserIdLoggedUseCase
 import com.joao01sb.shophub.features.cart.domain.usecase.PlaceOrderUseCase
 import com.joao01sb.shophub.features.cart.domain.usecase.RemoveCartItemUseCase
 import com.joao01sb.shophub.features.cart.domain.usecase.ValidateCheckoutInfoUseCase
@@ -84,10 +83,4 @@ object CartModule {
         return ValidateCheckoutInfoUseCase(checkoutInfo)
     }
 
-    @Provides
-    fun provideGetCurrentUserIdLoggedUseCase(
-        cartRepository: CartRepository
-    ) : GetCurrentUserIdLoggedUseCase {
-        return GetCurrentUserIdLoggedUseCase(cartRepository)
-    }
 }

@@ -2,10 +2,11 @@ package com.joao01sb.shophub.features.cart.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joao01sb.shophub.core.domain.manager.AuthManager
+import com.joao01sb.shophub.core.domain.manager.CartManager
 import com.joao01sb.shophub.features.cart.domain.usecase.UpdateItemUseCase
 import com.joao01sb.shophub.features.cart.domain.usecase.ClearCartUseCase
 import com.joao01sb.shophub.features.cart.domain.usecase.GetCartItemsUseCase
-import com.joao01sb.shophub.features.cart.domain.usecase.GetCurrentUserIdLoggedUseCase
 import com.joao01sb.shophub.features.cart.domain.usecase.RemoveCartItemUseCase
 import com.joao01sb.shophub.features.cart.presentation.event.CartEvent
 import com.joao01sb.shophub.features.cart.presentation.state.CartUiEvent
@@ -23,11 +24,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-    private val getCartItemsUseCase: GetCartItemsUseCase,
-    private val updateItemUseCase: UpdateItemUseCase,
-    private val removeCartItemUseCase: RemoveCartItemUseCase,
-    private val clearCartUseCase: ClearCartUseCase,
-    getCurrentUserIdUseCase: GetCurrentUserIdLoggedUseCase,
+    private val cartManager: CartManager,
+    private val authManager: AuthManager
 ) : ViewModel() {
 
     private var userId: String? = null
@@ -40,7 +38,7 @@ class CartViewModel @Inject constructor(
 
 
     init {
-        getCurrentUserIdUseCase()
+        authManager.getCurrentUserId()
             .onSuccess {
                 userId = it
             }
@@ -50,7 +48,7 @@ class CartViewModel @Inject constructor(
 
         viewModelScope.launch {
             userId?.let {
-                getCartItemsUseCase(it)
+                cartManager.getItems(it)
                     .catch {
                         _cartItems.update {
                             CartUiState.Error("Error fetching cart items")
@@ -75,7 +73,7 @@ class CartViewModel @Inject constructor(
             is CartEvent.UpdateCartItem -> {
                 userId?.let {
                     viewModelScope.launch {
-                        updateItemUseCase(it, event.cartItem, event.quantity)
+                        cartManager.addItem(it, event.cartItem, event.quantity)
                     }
                 }
             }
@@ -83,7 +81,7 @@ class CartViewModel @Inject constructor(
             is CartEvent.RemoveCartItem -> {
                 userId?.let {
                     viewModelScope.launch {
-                        removeCartItemUseCase(it, event.cartItem.idProduto.toString())
+                        cartManager.removeItem(it, event.cartItem.idProduto.toString())
                     }
                 }
             }
@@ -91,7 +89,7 @@ class CartViewModel @Inject constructor(
             is CartEvent.ClearCart -> {
                 userId?.let {
                     viewModelScope.launch {
-                        clearCartUseCase(it)
+                        cartManager.clearCart(it)
                     }
                 }
             }
