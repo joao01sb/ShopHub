@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.joao01sb.shophub.core.navigation.Routes
+import com.joao01sb.shophub.features.home.presentation.event.DetailsEvent
 import com.joao01sb.shophub.features.home.presentation.event.SearchEvent
 import com.joao01sb.shophub.features.home.presentation.screen.DetailsProductScreen
 import com.joao01sb.shophub.features.home.presentation.screen.HomeScreen
@@ -49,7 +50,7 @@ fun NavGraphBuilder.homeGraph(
                     navController.popBackStack()
                 },
                 onAddCart = {
-                    navController.navigate(Routes.CartGraph)
+                    viewModel.onEvent(DetailsEvent.AddToCart)
                 }
             )
         }
