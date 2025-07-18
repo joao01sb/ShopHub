@@ -35,7 +35,8 @@ import com.joao01sb.shophub.shared_ui.components.TopAppBarCustom
 fun DetailsProductScreen(
     uiState: ProductDetailsUiState = ProductDetailsUiState(),
     onBack: () -> Unit = {},
-    onAddCart: () -> Unit = {}
+    onAddCart: () -> Unit = {},
+    onNavigateToCart: () -> Unit = {}
 ) {
 
     Column(
@@ -64,8 +65,7 @@ fun DetailsProductScreen(
             }
         } else {
             TopAppBarCustom("Details", onNavigationClick = onBack)
-            Column(
-            ) {
+            Column {
 
                 Box(modifier = Modifier.weight(1f)) {
                     AsyncImage(
@@ -130,6 +130,17 @@ fun DetailsProductScreen(
                     )
 
 
+                }
+
+                if (uiState.isShowButtonToCart) {
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        onClick = onNavigateToCart
+                    ) {
+                        Text("Go to Cart",fontSize = 16.sp,)
+                    }
                 }
 
                 Button(

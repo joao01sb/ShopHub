@@ -1,6 +1,9 @@
 package com.joao01sb.shophub.core.navigation.graphs
 
+import android.widget.Toast
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
@@ -10,6 +13,7 @@ import androidx.navigation.compose.navigation
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.joao01sb.shophub.core.navigation.Routes
 import com.joao01sb.shophub.features.home.presentation.event.DetailsEvent
+import com.joao01sb.shophub.features.home.presentation.event.DetailsUiEvent
 import com.joao01sb.shophub.features.home.presentation.event.SearchEvent
 import com.joao01sb.shophub.features.home.presentation.screen.DetailsProductScreen
 import com.joao01sb.shophub.features.home.presentation.screen.HomeScreen
@@ -44,6 +48,23 @@ fun NavGraphBuilder.homeGraph(
         composable<Routes.Details> {
             val viewModel = hiltViewModel<ProductDetailsViewModel>()
             val state by viewModel.uiState.collectAsStateWithLifecycle()
+            val localContext = LocalContext.current
+
+            LaunchedEffect(Unit) {
+                viewModel.uiEvent.collect { event ->
+                    when (event) {
+                        is DetailsUiEvent.Success -> {
+                            Toast.makeText(localContext, event.message, Toast.LENGTH_SHORT).show()
+                        }
+
+                        is DetailsUiEvent.NavigateToCart -> {
+                            navController.navigate(Routes.CartGraph)
+                        }
+                    }
+                }
+            }
+
+
             DetailsProductScreen(
                 uiState = state,
                 onBack = {
@@ -51,6 +72,9 @@ fun NavGraphBuilder.homeGraph(
                 },
                 onAddCart = {
                     viewModel.onEvent(DetailsEvent.AddToCart)
+                },
+                onNavigateToCart = {
+                    navController.navigate(Routes.CartGraph)
                 }
             )
         }
