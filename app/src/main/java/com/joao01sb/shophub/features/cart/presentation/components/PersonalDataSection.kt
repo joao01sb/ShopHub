@@ -34,7 +34,8 @@ import com.joao01sb.shophub.features.cart.domain.model.CheckoutInfo
 @Composable
 fun PersonalDataSection(
     checkoutInfo: CheckoutInfo,
-    onCheckoutInfoChange: (CheckoutInfo) -> Unit,
+    onFullNameChanged: (String) -> Unit = {},
+    onPhoneChanged: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -66,9 +67,7 @@ fun PersonalDataSection(
             
             OutlinedTextField(
                 value = checkoutInfo.fullName,
-                onValueChange = { newValue ->
-                    onCheckoutInfoChange(checkoutInfo.copy(fullName = newValue))
-                },
+                onValueChange = onFullNameChanged,
                 label = { Text("Full Name") },
                 placeholder = { Text("João Silva ") },
                 modifier = Modifier.fillMaxWidth(),
@@ -86,7 +85,7 @@ fun PersonalDataSection(
                 value = checkoutInfo.phoneNumber,
                 onValueChange = { newValue ->
                     val formatted = formatPhoneNumber(newValue)
-                    onCheckoutInfoChange(checkoutInfo.copy(phoneNumber = formatted))
+                    onPhoneChanged(formatted)
                 },
                 label = { Text("Phone") },
                 placeholder = { Text("(11) 99999-9999") },
@@ -113,7 +112,6 @@ private fun PersonalDataSectionPreview() {
             fullName = "João Silva",
             phoneNumber = "(11) 99"
         ),
-        onCheckoutInfoChange = {},
         modifier = Modifier.padding(16.dp)
     )
 
