@@ -14,7 +14,7 @@ class CartManager(
     private val removeItemUseCase: RemoveCartItemUseCase,
     private val getItemsUseCase: GetCartItemsUseCase,
     private val clearCartUseCase: ClearCartUseCase,
-    private val placeOrderUseCase: PlaceOrderUseCase,
+    private val placeOrderUseCase: PlaceOrderUseCase
 ) {
     suspend fun addItem(userId: String, item: CartItem, quantity: Int = 1) = updateItemUseCase(userId, item, quantity)
 
