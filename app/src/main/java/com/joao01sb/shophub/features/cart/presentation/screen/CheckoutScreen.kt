@@ -17,29 +17,38 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.joao01sb.shophub.core.data.CartMocks
 import com.joao01sb.shophub.core.domain.model.CartItem
 import com.joao01sb.shophub.features.cart.domain.model.CheckoutInfo
 import com.joao01sb.shophub.features.cart.presentation.components.CardPaymentSection
 import com.joao01sb.shophub.features.cart.presentation.components.ConfirmOrderButton
 import com.joao01sb.shophub.features.cart.presentation.components.OrderSummarySection
 import com.joao01sb.shophub.features.cart.presentation.components.PersonalDataSection
+import com.joao01sb.shophub.features.cart.presentation.state.CheckoutUiState
 
 @Composable
 fun CheckoutScreen(
     modifier: Modifier = Modifier,
-    cartItems: List<CartItem>,
-    onPlaceOrder: (CheckoutInfo) -> Unit
+    uiState: CheckoutUiState = CheckoutUiState(),
+    onChangedCardNumber: (String) -> Unit = {},
+    onChangedCardHolderName: (String) -> Unit = {},
+    onChangedExpirationCard: (String) -> Unit = {},
+    onChangedCvv: (String) -> Unit = {},
+    onChangedFullName: (String) -> Unit = {},
+    onChangedPhone: (String) -> Unit = {},
+    onPlaceOrder: () -> Unit
 ) {
 
-    var checkoutInfo by remember { mutableStateOf(CheckoutInfo()) }
-
-    val isFormValid = checkoutInfo.numberCard.isNotBlank() &&
-            checkoutInfo.nameCard.isNotBlank() &&
-            checkoutInfo.dateCard.isNotBlank() &&
-            checkoutInfo.cvvCard.isNotBlank() &&
-            checkoutInfo.fullName.isNotBlank() &&
-            checkoutInfo.phoneNumber.isNotBlank()
+    val checkoutInfo = CheckoutInfo(
+        cvvCard = uiState.cvv,
+        numberCard = uiState.cardNumber,
+        nameCard = uiState.cardHolderName,
+        dateCard = uiState.expiryDate,
+        fullName = uiState.fullName,
+        phoneNumber = uiState.phone
+    )
 
     LazyColumn(
         modifier = modifier
@@ -60,28 +69,32 @@ fun CheckoutScreen(
         item {
             CardPaymentSection(
                 checkoutInfo = checkoutInfo,
-                onCheckoutInfoChange = { checkoutInfo = it }
+                onCardNumberChanged = onChangedCardNumber,
+                onCardHolderNameChanged = onChangedCardHolderName,
+                onCardExpiration = onChangedExpirationCard,
+                onCardCVVChanged = onChangedCvv
             )
         }
 
         item {
             PersonalDataSection(
                 checkoutInfo = checkoutInfo,
-                onCheckoutInfoChange = { checkoutInfo = it }
+                onFullNameChanged = onChangedFullName,
+                onPhoneChanged = onChangedPhone
             )
         }
 
         item {
             OrderSummarySection(
-                cartItems = cartItems,
+                cartItems = uiState.itens,
                 freight = 0.0
             )
         }
 
         item {
             ConfirmOrderButton(
-                onClick = { onPlaceOrder(checkoutInfo) },
-                enabled = isFormValid
+                onClick = onPlaceOrder,
+                enabled = true
             )
         }
 
@@ -89,5 +102,15 @@ fun CheckoutScreen(
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
+}
 
+@Preview
+@Composable
+private fun CheckoutScreenPreview() {
+    CheckoutScreen(
+        modifier = Modifier,
+        onPlaceOrder = {
+
+        }
+    )
 }
