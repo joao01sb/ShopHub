@@ -19,7 +19,6 @@ import androidx.compose.material.icons.outlined.AccountBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,8 +36,11 @@ import com.joao01sb.shophub.features.cart.domain.model.CheckoutInfo
 
 @Composable
 fun CardPaymentSection(
+    onCardNumberChanged: (String) -> Unit,
+    onCardHolderNameChanged: (String) -> Unit,
+    onCardExpiration: (String) -> Unit,
+    onCardCVVChanged: (String) -> Unit,
     checkoutInfo: CheckoutInfo,
-    onCheckoutInfoChange: (CheckoutInfo) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -70,9 +72,9 @@ fun CardPaymentSection(
             
             OutlinedTextField(
                 value = checkoutInfo.numberCard,
-                onValueChange = { newValue ->
+                onValueChange = { newValue: String ->
                     val formatted = formatCardNumber(newValue)
-                    onCheckoutInfoChange(checkoutInfo.copy(numberCard = formatted))
+                    onCardNumberChanged(formatted)
                 },
                 label = { Text("Card number") },
                 placeholder = { Text("1234 5678 9012 3456") },
@@ -92,9 +94,7 @@ fun CardPaymentSection(
             
             OutlinedTextField(
                 value = checkoutInfo.nameCard,
-                onValueChange = { newValue ->
-                    onCheckoutInfoChange(checkoutInfo.copy(nameCard = newValue.uppercase()))
-                },
+                onValueChange = onCardHolderNameChanged,
                 label = { Text("Name on Card") },
                 placeholder = { Text("JOÃO SILVA") },
                 modifier = Modifier.fillMaxWidth(),
@@ -114,9 +114,9 @@ fun CardPaymentSection(
             ) {
                 OutlinedTextField(
                     value = checkoutInfo.dateCard,
-                    onValueChange = { newValue ->
+                    onValueChange = { newValue: String ->
                         val formatted = formatCardDate(newValue)
-                        onCheckoutInfoChange(checkoutInfo.copy(dateCard = formatted))
+                        onCardExpiration(formatted)
                     },
                     label = { Text("Validity") },
                     placeholder = { Text("MM/AA") },
@@ -134,9 +134,9 @@ fun CardPaymentSection(
                 
                 OutlinedTextField(
                     value = checkoutInfo.cvvCard,
-                    onValueChange = { newValue ->
+                    onValueChange = { newValue: String ->
                         if (newValue.length <= 3) {
-                            onCheckoutInfoChange(checkoutInfo.copy(cvvCard = newValue))
+                            onCardCVVChanged(newValue)
                         }
                     },
                     label = { Text("CVV") },
@@ -161,6 +161,10 @@ fun CardPaymentSection(
 @Composable
 private fun CardPaymentSectionPreview() {
     CardPaymentSection(
+        onCardExpiration = {},
+        onCardCVVChanged = {},
+        onCardNumberChanged = {},
+        onCardHolderNameChanged = {},
         checkoutInfo = CheckoutInfo(
             fullName = "João Silva",
             phoneNumber = "(11) 99999-9999",
@@ -168,7 +172,6 @@ private fun CardPaymentSectionPreview() {
             nameCard = "JOÃO SILVA",
             dateCard = "12/25",
             cvvCard = "123"
-        ),
-        onCheckoutInfoChange = {}
+        )
     )
 }
