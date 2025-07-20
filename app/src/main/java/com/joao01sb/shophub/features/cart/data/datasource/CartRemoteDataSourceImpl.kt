@@ -2,6 +2,7 @@ package com.joao01sb.shophub.features.cart.data.datasource
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.joao01sb.shophub.core.domain.enums.OrderStatus
 import com.joao01sb.shophub.core.domain.model.CartItem
 import com.joao01sb.shophub.core.domain.model.Order
 import com.joao01sb.shophub.features.cart.domain.datasource.CartRemoteDataSource
@@ -82,7 +83,7 @@ class CartRemoteDataSourceImpl(
             id = orderId,
             items = items,
             total = total,
-            status = "confirm",
+            status = OrderStatus.COMPLETED,
             createdAt = System.currentTimeMillis(),
             paymentInfo = info
         )
