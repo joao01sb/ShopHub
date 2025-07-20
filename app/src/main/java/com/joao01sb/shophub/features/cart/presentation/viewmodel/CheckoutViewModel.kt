@@ -9,6 +9,7 @@ import com.joao01sb.shophub.features.cart.domain.usecase.ValidateCheckoutInfoUse
 import com.joao01sb.shophub.features.cart.presentation.event.CheckoutEvent
 import com.joao01sb.shophub.features.cart.presentation.state.CheckoutUiEvent
 import com.joao01sb.shophub.features.cart.presentation.state.CheckoutUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class CheckoutViewModel @Inject constructor(
     private val validateCheckoutInfoUseCase: ValidateCheckoutInfoUseCase,
     private val cartManager: CartManager,
@@ -30,7 +32,7 @@ class CheckoutViewModel @Inject constructor(
     private val _checkoutState: MutableStateFlow<CheckoutUiState> = MutableStateFlow(CheckoutUiState())
     val checkoutSate: StateFlow<CheckoutUiState>  = _checkoutState.asStateFlow()
 
-    private val _checkoutUiEvent: MutableSharedFlow<CheckoutUiEvent> = MutableSharedFlow()
+    private val _checkoutUiEvent: MutableSharedFlow<CheckoutUiEvent> = MutableSharedFlow(replay = 1)
     val checkoutUiEvent: SharedFlow<CheckoutUiEvent> = _checkoutUiEvent.asSharedFlow()
 
     init {
@@ -91,7 +93,7 @@ class CheckoutViewModel @Inject constructor(
                         }
                         placerOrder()
                     } else {
-                        _checkoutUiEvent.tryEmit(CheckoutUiEvent.Error(""))
+                        _checkoutUiEvent.tryEmit(CheckoutUiEvent.Error("invalid checkout information"))
                     }
                 }
             }
