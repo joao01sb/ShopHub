@@ -37,10 +37,14 @@ fun NavGraphBuilder.cartGraph(
                 viewModel.uiEvent.collect { event ->
                     when (event) {
                         CartUiEvent.Back -> {
-                            navController.navigate(Routes.HomeGraph)
+                            navController.navigate(Routes.HomeGraph) {
+                                popUpTo(Routes.CartGraph) { inclusive = true }
+                            }
                         }
                         CartUiEvent.Checkout -> {
-                            navController.navigate(Routes.Checkout)
+                            navController.navigate(Routes.Checkout) {
+                                popUpTo(Routes.Cart) { inclusive = true }
+                            }
                         }
                     }
                 }
@@ -81,7 +85,6 @@ fun NavGraphBuilder.cartGraph(
                             Toast.makeText(currentContex, event.message, Toast.LENGTH_LONG).show()
                         }
                         is CheckoutUiEvent.Finaly -> {
-                            Toast.makeText(currentContex, "Success", Toast.LENGTH_LONG).show()
                             navController.navigate(Routes.HomeGraph) {
                                 popUpTo(Routes.AuthGraph) { inclusive = true }
                             }
@@ -113,6 +116,11 @@ fun NavGraphBuilder.cartGraph(
                 },
                 onChangedPhone = {
                     viewModel.onEvent(CheckoutEvent.PhoneChanged(it))
+                },
+                onBack = {
+                    navController.navigate(Routes.Cart) {
+                        popUpTo(Routes.Checkout) { inclusive = true }
+                    }
                 }
             )
         }
