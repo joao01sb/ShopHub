@@ -77,10 +77,8 @@ object CartModule {
     }
 
     @Provides
-    fun provideValidateCheckoutInfoUseCase(
-        checkoutInfo: CheckoutInfo
-    ) : ValidateCheckoutInfoUseCase {
-        return ValidateCheckoutInfoUseCase(checkoutInfo)
+    fun provideValidateCheckoutInfoUseCase() : ValidateCheckoutInfoUseCase {
+        return ValidateCheckoutInfoUseCase()
     }
 
 }
