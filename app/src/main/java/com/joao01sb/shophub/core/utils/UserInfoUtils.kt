@@ -1,5 +1,9 @@
 package com.joao01sb.shophub.core.utils
 
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
 fun formatCardNumber(input: String): String {
     val digitsOnly = input.filter { it.isDigit() }
     return digitsOnly.chunked(4).joinToString(" ").take(19)
@@ -21,4 +25,14 @@ fun formatPhoneNumber(input: String): String {
         digitsOnly.length >= 3 -> "(${digitsOnly.take(2)}) ${digitsOnly.drop(2)}"
         else -> digitsOnly
     }
+}
+
+fun formatDate(timestamp: Long): String {
+    val formatter = SimpleDateFormat("dd 'de' MMMM, yyyy", Locale("pt", "BR"))
+    return formatter.format(Date(timestamp))
+}
+
+fun maskCardNumber(cardNumber: String): String {
+    if (cardNumber.length < 4) return cardNumber
+    return "**** **** **** ${cardNumber.takeLast(4)}"
 }
