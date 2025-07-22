@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joao01sb.shophub.core.domain.manager.AuthManager
 import com.joao01sb.shophub.features.orders.domain.usecase.GetOrdersUseCase
+import com.joao01sb.shophub.features.orders.presentation.state.OrdersEvent
 import com.joao01sb.shophub.features.orders.presentation.state.OrdersUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,6 +48,17 @@ class OrdersViewModel @Inject constructor(
                 }
         } ?: run {
             _ordersUiState.value = OrdersUiState.Error("User not authenticated")
+        }
+    }
+
+    fun onEvent(event: OrdersEvent) {
+        _ordersUiState.value = OrdersUiState.Loading
+        when (event) {
+            is OrdersEvent.RefreshOrders -> {
+                viewModelScope.launch {
+                    getOrders()
+                }
+            }
         }
     }
 
