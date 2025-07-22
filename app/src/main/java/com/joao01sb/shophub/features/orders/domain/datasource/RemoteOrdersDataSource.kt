@@ -8,4 +8,6 @@ interface RemoteOrdersDataSource {
 
     fun getCurrentUserId(): String?
 
+    suspend fun getOrderById(userId: String, id: String): Order?
+
 }

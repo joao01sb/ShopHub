@@ -6,7 +6,7 @@ import com.joao01sb.shophub.features.orders.domain.repository.OrdersRepository
 
 class OrdersRepositoryImp(
     private val dataSourceImp: RemoteOrdersDataSource
-) : OrdersRepository{
+) : OrdersRepository {
 
     override suspend fun getOrders(userId: String): List<Order> {
         return dataSourceImp.getOrders(userId)
@@ -14,5 +14,12 @@ class OrdersRepositoryImp(
 
     override fun getCurrentUserId(): String? {
         return dataSourceImp.getCurrentUserId()
+    }
+
+    override suspend fun getOrderById(
+        userId: String,
+        id: String
+    ): Order? {
+        return dataSourceImp.getOrderById(userId, id)
     }
 }

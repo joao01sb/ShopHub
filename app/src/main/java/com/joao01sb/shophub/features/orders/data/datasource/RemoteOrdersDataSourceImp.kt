@@ -27,4 +27,25 @@ class RemoteOrdersDataSourceImp(
     override fun getCurrentUserId(): String? {
         return firebaseAuth.currentUser?.uid
     }
+
+    override suspend fun getOrderById(
+        userId: String,
+        orderId: String
+    ): Order? {
+        val document = firestore
+            .collection("users")
+            .document(userId)
+            .collection("orders")
+            .document(orderId)
+            .get()
+            .await()
+
+        if (!document.exists()) {
+            return null
+        } else if (document.data.isNullOrEmpty()) {
+            throw IllegalStateException("Order data is empty")
+        }
+
+        return document.toObject(Order::class.java)
+    }
 }
