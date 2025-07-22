@@ -24,23 +24,23 @@ sealed class Routes {
     // Orders Feature
     @Serializable data object OrdersGraph : Routes()
     @Serializable data object Orders : Routes()
-    @Serializable data object DetailsOrder : Routes()
+    @Serializable data class DetailsOrder(val orderId: String) : Routes()
 }
 
 fun Routes.route(): String {
     return when (this) {
         is Routes.AuthGraph -> "auth_graph"
-        is Routes.Login -> "login"
-        is Routes.Register -> "register"
+        is Routes.Login -> "com.joao01sb.shophub.core.navigation.Routes.Login"
+        is Routes.Register -> "com.joao01sb.shophub.core.navigation.Routes.Register"
         is Routes.CartGraph -> "cart_graph"
-        is Routes.Cart -> "cart"
-        is Routes.Checkout -> "checkout"
+        is Routes.Cart -> "com.joao01sb.shophub.core.navigation.Routes.Cart"
+        is Routes.Checkout -> "com.joao01sb.shophub.core.navigation.Routes.Checkout"
         is Routes.HomeGraph -> "home_graph"
-        is Routes.Details -> "details"
-        is Routes.Home -> "home"
-        is Routes.Search -> "search"
+        is Routes.Details -> "com.joao01sb.shophub.core.navigation.Routes.Details"
+        is Routes.Home -> "com.joao01sb.shophub.core.navigation.Routes.Home"
+        is Routes.Search -> "com.joao01sb.shophub.core.navigation.Routes.Search"
         is Routes.OrdersGraph -> "orders_graph"
-        is Routes.Orders -> "orders"
-        is Routes.DetailsOrder -> "detailsorders"
+        is Routes.Orders -> "com.joao01sb.shophub.core.navigation.Routes.Orders"
+        is Routes.DetailsOrder -> "com.joao01sb.shophub.core.navigation.Routes.DetailsOrder"
     }
 }
