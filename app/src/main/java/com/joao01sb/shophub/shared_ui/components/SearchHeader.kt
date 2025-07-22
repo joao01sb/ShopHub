@@ -35,9 +35,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun SearchHeader(
     modifier: Modifier = Modifier,
-    onSearchClick: () -> Unit = {},
-    onCartClick: () -> Unit = {},
-    cartItemCount: Int = 3
+    onSearchClick: () -> Unit = {}
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -72,48 +70,6 @@ fun SearchHeader(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-            }
-        }
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        Box(
-            modifier = Modifier
-                .size(48.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(
-                    color = MaterialTheme.colorScheme.secondaryContainer,
-                    shape = RoundedCornerShape(16.dp)
-                )
-                .clickable { onCartClick() },
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.ShoppingCart,
-                contentDescription = "shopping cart",
-                tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                modifier = Modifier.size(24.dp)
-            )
-
-            if (cartItemCount > 0) {
-                Box(
-                    modifier = Modifier
-                        .offset(x = 12.dp, y = (-12).dp)
-                        .size(20.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.error,
-                            shape = CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = if (cartItemCount > 99) "99+" else cartItemCount.toString(),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onError,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 10.sp
-                    )
-                }
             }
         }
     }
