@@ -17,10 +17,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.joao01sb.shophub.core.data.mock.MockOrders
 import com.joao01sb.shophub.core.domain.model.Order
 import com.joao01sb.shophub.core.utils.formatDate
+import java.util.UUID
 
 @Composable
 fun OrderCard(
@@ -44,7 +47,7 @@ fun OrderCard(
                 verticalAlignment = Alignment.Top
             ) {
                 Text(
-                    text = order.id,
+                    text = order.orderNumber,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(0xFF333333)
@@ -83,4 +86,13 @@ fun OrderCard(
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun OrderCardPreview() {
+    OrderCard(
+        order = MockOrders.orders.first().copy(id = UUID.randomUUID().toString()),
+        onClick = {}
+    )
 }

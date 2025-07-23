@@ -46,7 +46,7 @@ fun OrderStatusSection(order: Order) {
         
         Spacer(modifier = Modifier.height(16.dp))
         
-        InfoRow(label = "Order:", value = order.id)
+        InfoRow(label = "Order:", value = order.orderNumber)
         InfoRow(label = "Date:", value = formatDate(order.createdAt))
     }
 }
