@@ -46,9 +46,7 @@ fun NavGraphBuilder.ordersGraph(
             OrderDetailsScreen(
                 orderDetalsState = orderDetailsState,
                 onBackClick = {
-                    navController.navigate(Routes.Orders) {
-                        popUpTo(Routes.DetailsOrder) { inclusive = true }
-                    }
+                    navController.navigate(Routes.Orders)
                 },
                 onRetry = {
                     viewModel.onEvent(DetailsOrderEvent.RefreshOrder)
