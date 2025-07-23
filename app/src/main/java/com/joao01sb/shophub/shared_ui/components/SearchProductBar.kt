@@ -19,9 +19,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 
@@ -33,6 +38,10 @@ fun SearchProductBar(
     placeholder: String = "Search products...",
     modifier: Modifier = Modifier
 ) {
+    
+    val currentFocus = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester() }
+    
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -45,7 +54,7 @@ fun SearchProductBar(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Voltar",
+                contentDescription = "Back",
                 tint = MaterialTheme.colorScheme.onSurface
             )
         }
@@ -61,7 +70,9 @@ fun SearchProductBar(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester),
             singleLine = true,
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -75,6 +86,7 @@ fun SearchProductBar(
             ),
             keyboardActions = KeyboardActions(
                 onSearch = {
+                    currentFocus.clearFocus()
                 }
             ),
             trailingIcon = if (query.isNotEmpty()) {
@@ -84,12 +96,16 @@ fun SearchProductBar(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Clear,
-                            contentDescription = "Limpar",
+                            contentDescription = "Clear search",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
             } else null
         )
+    }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
     }
 }
