@@ -15,11 +15,11 @@ object MockOrders {
             ),
             total = 299.7,
             status = OrderStatus.COMPLETED,
-            createdAt = 1721400000000,
+            createdAt = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000),
             paymentInfo = CheckoutInfo(
                 "1234 5678 9012 3456",
                 "João Silva",
-                "12/27",
+                "12/25",
                 "123",
                 "João Silva",
                 "11999999999"
@@ -28,17 +28,17 @@ object MockOrders {
         Order(
             id = "2",
             items = listOf(
-                CartItem(3, "Calça Jeans", 1, 129.9, 129.9, "Roupas", "url3")
+                CartItem(3, "Fone de Ouvido", 1, 89.9, 89.9, "Eletrônicos", "url3")
             ),
-            total = 129.9,
+            total = 89.9,
             status = OrderStatus.PENDING,
-            createdAt = 1721300000000,
+            createdAt = System.currentTimeMillis() - (5 * 24 * 60 * 60 * 1000),
             paymentInfo = CheckoutInfo(
-                "4321 8765 2109 6543",
-                "Maria Souza",
-                "11/26",
-                "321",
-                "Maria Souza",
+                "5678 9012 3456 7890",
+                "Maria Santos",
+                "11/24",
+                "456",
+                "Maria Santos",
                 "11988888888"
             )
         ),
@@ -49,7 +49,7 @@ object MockOrders {
             ),
             total = 89.9,
             status = OrderStatus.PROCESSING,
-            createdAt = 1721200000000,
+            createdAt = System.currentTimeMillis() - (3 * 24 * 60 * 60 * 1000),
             paymentInfo = CheckoutInfo(
                 "5555 6666 7777 8888",
                 "Carlos Lima",
@@ -66,7 +66,7 @@ object MockOrders {
             ),
             total = 159.9,
             status = OrderStatus.COMPLETED,
-            createdAt = 1721100000000,
+            createdAt = System.currentTimeMillis() - (10 * 24 * 60 * 60 * 1000),
             paymentInfo = CheckoutInfo(
                 "9999 8888 7777 6666",
                 "Ana Paula",
@@ -83,7 +83,7 @@ object MockOrders {
             ),
             total = 79.9,
             status = OrderStatus.PENDING,
-            createdAt = 1721000000000,
+            createdAt = System.currentTimeMillis() - (2 * 24 * 60 * 60 * 1000),
             paymentInfo = CheckoutInfo(
                 "1111 2222 3333 4444",
                 "Pedro Alves",
@@ -100,7 +100,7 @@ object MockOrders {
             ),
             total = 119.8,
             status = OrderStatus.COMPLETED,
-            createdAt = 1720900000000,
+            createdAt = System.currentTimeMillis() - (6 * 24 * 60 * 60 * 1000),
             paymentInfo = CheckoutInfo(
                 "2222 3333 4444 5555",
                 "Lucas Dias",
@@ -117,7 +117,7 @@ object MockOrders {
             ),
             total = 99.9,
             status = OrderStatus.PROCESSING,
-            createdAt = 1720800000000,
+            createdAt = System.currentTimeMillis() - (1 * 24 * 60 * 60 * 1000),
             paymentInfo = CheckoutInfo(
                 "3333 4444 5555 6666",
                 "Fernanda Reis",
@@ -134,48 +134,14 @@ object MockOrders {
             ),
             total = 89.7,
             status = OrderStatus.COMPLETED,
-            createdAt = 1720700000000,
+            createdAt = System.currentTimeMillis(),
             paymentInfo = CheckoutInfo(
                 "4444 5555 6666 7777",
                 "Gabriel Costa",
                 "05/28",
-                "159",
+                "147",
                 "Gabriel Costa",
                 "11922222222"
-            )
-        ),
-        Order(
-            id = "9",
-            items = listOf(
-                CartItem(10, "Smartwatch", 1, 299.9, 299.9, "Eletrônicos", "url10")
-            ),
-            total = 299.9,
-            status = OrderStatus.PENDING,
-            createdAt = 1720600000000,
-            paymentInfo = CheckoutInfo(
-                "5555 6666 7777 8888",
-                "Juliana Melo",
-                "04/27",
-                "951",
-                "Juliana Melo",
-                "11911111111"
-            )
-        ),
-        Order(
-            id = "10",
-            items = listOf(
-                CartItem(11, "Cadeira Gamer", 1, 599.9, 599.9, "Móveis", "url11")
-            ),
-            total = 599.9,
-            status = OrderStatus.COMPLETED,
-            createdAt = 1720500000000,
-            paymentInfo = CheckoutInfo(
-                "6666 7777 8888 9999",
-                "Rafael Torres",
-                "03/26",
-                "753",
-                "Rafael Torres",
-                "11900000000"
             )
         )
     )
