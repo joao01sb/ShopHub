@@ -6,6 +6,7 @@ import com.joao01sb.shophub.features.orders.data.datasource.RemoteOrdersDataSour
 import com.joao01sb.shophub.features.orders.data.repository.OrdersRepositoryImp
 import com.joao01sb.shophub.features.orders.domain.datasource.RemoteOrdersDataSource
 import com.joao01sb.shophub.features.orders.domain.repository.OrdersRepository
+import com.joao01sb.shophub.features.orders.domain.usecase.GetOrderByIdUseCase
 import com.joao01sb.shophub.features.orders.domain.usecase.GetOrdersUseCase
 import dagger.Module
 import dagger.Provides
@@ -39,6 +40,13 @@ object OrdersModule {
         repository: OrdersRepository
     ): GetOrdersUseCase {
         return GetOrdersUseCase(repository)
+    }
+
+    @Provides
+    fun provideGetOrderByIdUseCase(
+        repository: OrdersRepository
+    ): GetOrderByIdUseCase {
+        return GetOrderByIdUseCase(repository)
     }
 
 }
