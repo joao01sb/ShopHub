@@ -88,14 +88,20 @@ class CartRemoteDataSourceImpl(
             paymentInfo = info
         )
 
-        firestore
-            .collection("users")
-            .document(userId)
-            .collection("orders")
+        val userDoc = firestore.collection("users").document(userId)
+
+        userDoc.collection("orders")
             .document(orderId)
             .set(order)
             .await()
+
+        val cartRef = userDoc.collection("cart")
+        val cartItems = cartRef.get().await()
+        for (doc in cartItems.documents) {
+            doc.reference.delete().await()
+        }
     }
+
 
     override fun getCurrentUserId(): String? {
         return firebaseAuth.currentUser?.uid
