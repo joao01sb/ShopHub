@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -33,6 +34,8 @@ fun TopAppBarCustom(
     title: String = "Title",
     navigationIcon: ImageVector = Icons.Default.ArrowBack,
     onNavigationClick: () -> Unit = {},
+    onLogoutClick: () -> Unit = {},
+    isLogoutVisible: Boolean = false,
     backgroundColor: Color = Color.DarkGray,
     contentColor: Color = Color.Black
 ) {
@@ -62,11 +65,30 @@ fun TopAppBarCustom(
             Spacer(modifier = Modifier.width(16.dp))
 
             Text(
+                modifier = Modifier.weight(1f),
                 text = title,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
                 color = contentColor
             )
+
+            if (isLogoutVisible) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .clickable { onLogoutClick() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Logout",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+
         }
 
         HorizontalDivider(

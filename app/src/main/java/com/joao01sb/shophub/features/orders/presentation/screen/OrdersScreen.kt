@@ -37,6 +37,7 @@ fun OrdersScreen(
     orderUiState: OrdersUiState,
     onOrderClick: (Order) -> Unit,
     onBackClick: () -> Unit,
+    onLogoutClick: () -> Unit = {},
     onRetry: () -> Unit = {}
 ) {
 
@@ -83,7 +84,9 @@ fun OrdersScreen(
             ) {
                 TopAppBarCustom(
                     title = "My Orders",
-                    onNavigationClick = onBackClick
+                    onNavigationClick = onBackClick,
+                    isLogoutVisible = true,
+                    onLogoutClick = onLogoutClick
                 )
 
                 Column(

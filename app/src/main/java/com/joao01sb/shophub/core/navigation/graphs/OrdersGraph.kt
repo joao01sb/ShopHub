@@ -1,5 +1,6 @@
 package com.joao01sb.shophub.core.navigation.graphs
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -8,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.joao01sb.shophub.core.navigation.Routes
+import com.joao01sb.shophub.features.orders.presentation.event.OrderUiEvent
 import com.joao01sb.shophub.features.orders.presentation.screen.OrderDetailsScreen
 import com.joao01sb.shophub.features.orders.presentation.screen.OrdersScreen
 import com.joao01sb.shophub.features.orders.presentation.state.DetailsOrderEvent
@@ -24,6 +26,17 @@ fun NavGraphBuilder.ordersGraph(
         composable<Routes.Orders> {
             val viewModel = hiltViewModel<OrdersViewModel>()
             val ordersState by viewModel.ordersUiState.collectAsStateWithLifecycle()
+            LaunchedEffect(Unit) {
+                viewModel.orderUiEvent.collect { event ->
+                    when (event) {
+                        is OrderUiEvent.Logout -> {
+                            navController.navigate(Routes.AuthGraph) {
+                                popUpTo(Routes.OrdersGraph) { inclusive = true }
+                            }
+                        }
+                    }
+                }
+            }
             OrdersScreen(
                 orderUiState = ordersState,
                 onOrderClick = { orderId ->
@@ -36,6 +49,9 @@ fun NavGraphBuilder.ordersGraph(
                 },
                 onRetry = {
                     viewModel.onEvent(OrdersEvent.RefreshOrders)
+                },
+                onLogoutClick = {
+                    viewModel.onEvent(OrdersEvent.Logout)
                 }
             )
         }
