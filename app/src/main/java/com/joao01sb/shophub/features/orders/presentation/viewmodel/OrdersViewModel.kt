@@ -40,7 +40,7 @@ class OrdersViewModel @Inject constructor(
     private val _ordersUiState = MutableStateFlow<OrdersUiState>(OrdersUiState.Loading)
     val ordersUiState: StateFlow<OrdersUiState> = _ordersUiState.asStateFlow()
 
-    private val _orderUiEvent = MutableSharedFlow<OrderUiEvent>()
+    private val _orderUiEvent = MutableSharedFlow<OrderUiEvent>(replay = 1)
     val orderUiEvent = _orderUiEvent.asSharedFlow()
 
     suspend fun getOrders() {
