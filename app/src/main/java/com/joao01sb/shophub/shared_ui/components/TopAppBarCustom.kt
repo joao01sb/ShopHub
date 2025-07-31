@@ -36,14 +36,11 @@ fun TopAppBarCustom(
     onNavigationClick: () -> Unit = {},
     onLogoutClick: () -> Unit = {},
     isLogoutVisible: Boolean = false,
-    backgroundColor: Color = Color.DarkGray,
-    contentColor: Color = Color.Black
 ) {
     Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(backgroundColor)
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -57,7 +54,7 @@ fun TopAppBarCustom(
                 Icon(
                     imageVector = navigationIcon,
                     contentDescription = "Voltar",
-                    tint = contentColor,
+                    tint = Color.Black,
                     modifier = Modifier.size(24.dp)
                 )
             }
@@ -69,7 +66,7 @@ fun TopAppBarCustom(
                 text = title,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
-                color = contentColor
+                color = Color.Black
             )
 
             if (isLogoutVisible) {
@@ -83,7 +80,7 @@ fun TopAppBarCustom(
                     Icon(
                         imageVector = Icons.Default.Person,
                         contentDescription = "Logout",
-                        tint = Color.White,
+                        tint = Color.Black,
                         modifier = Modifier.size(24.dp)
                     )
                 }
