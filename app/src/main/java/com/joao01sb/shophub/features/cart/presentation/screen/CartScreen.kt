@@ -3,6 +3,9 @@ package com.joao01sb.shophub.features.cart.presentation.screen
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -38,20 +41,25 @@ fun CartScreen(
         when (uiState) {
             is CartUiState.Error -> {
                 Box(
+                    modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "Error: ${uiState.message}"
-                    )
-                    Button(
-                        onClick = onRetry
-                    ) {
-                        Text(text = "Retry")
+                    Column {
+                        Text(
+                            text = "Error: ${uiState.message}"
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(
+                            onClick = onRetry
+                        ) {
+                            Text(text = "Retry")
+                        }
                     }
                 }
             }
             is CartUiState.Loading -> {
                 Box(
+                    modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -60,21 +68,32 @@ fun CartScreen(
                 }
             }
             is CartUiState.Success -> {
-                LazyColumn(
-                    modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(vertical = 8.dp)
-                ) {
-                    items(uiState.cart.size) { index ->
-                        val item = uiState.cart[index]
-                        CartItemCard(
-                            item = item,
-                            onQuantityChange = { newQuantity ->
-                                onQuantityChange(item,newQuantity)
-                            },
-                            onRemoveItem = {
-                                onRemoveItem(item)
-                            }
+                if (uiState.cart.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Your cart is empty"
                         )
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(vertical = 8.dp)
+                    ) {
+                        items(uiState.cart.size) { index ->
+                            val item = uiState.cart[index]
+                            CartItemCard(
+                                item = item,
+                                onQuantityChange = { newQuantity ->
+                                    onQuantityChange(item,newQuantity)
+                                },
+                                onRemoveItem = {
+                                    onRemoveItem(item)
+                                }
+                            )
+                        }
                     }
                 }
                 BottomBarCart(

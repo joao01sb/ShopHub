@@ -75,58 +75,66 @@ fun OrdersScreen(
 
         is OrdersUiState.Success -> {
 
-            var selectedFilter by remember { mutableStateOf(OrderFilter.ALL) }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(0xFFF8F9FA))
-            ) {
-                TopAppBarCustom(
-                    title = "My Orders",
-                    onNavigationClick = onBackClick,
-                    isLogoutVisible = true,
-                    onLogoutClick = onLogoutClick
-                )
-
-                Column(
-                    modifier = Modifier.padding(8.dp)
+            if (orderUiState.orders.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    OrderFilterTabs(
-                        selectedFilter = selectedFilter,
-                        onFilterSelected = { selectedFilter = it }
+                    Text(text = "No orders found.")
+                }
+            } else {
+                var selectedFilter by remember { mutableStateOf(OrderFilter.ALL) }
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0xFFF8F9FA))
+                ) {
+                    TopAppBarCustom(
+                        title = "My Orders",
+                        onNavigationClick = onBackClick,
+                        isLogoutVisible = true,
+                        onLogoutClick = onLogoutClick
                     )
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Column(
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        OrderFilterTabs(
+                            selectedFilter = selectedFilter,
+                            onFilterSelected = { selectedFilter = it }
+                        )
 
-                    val filteredOrders = when (selectedFilter) {
-                        OrderFilter.ALL -> orderUiState.orders
-                        OrderFilter.COMPLETED -> orderUiState.orders.filter { it.status == OrderStatus.COMPLETED }
-                        OrderFilter.PENDING -> orderUiState.orders.filter {
-                            it.status == OrderStatus.PENDING || it.status == OrderStatus.PROCESSING
-                        }
-                    }
+                        Spacer(modifier = Modifier.height(20.dp))
 
-                    if (filteredOrders.isEmpty()) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(text = "No orders found.")
-                        }
-                    } else {
-                        LazyColumn(
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            items(filteredOrders) { order ->
-                                OrderCard(
-                                    order = order,
-                                    onClick = { onOrderClick(order) }
-                                )
+                        val filteredOrders = when (selectedFilter) {
+                            OrderFilter.ALL -> orderUiState.orders
+                            OrderFilter.COMPLETED -> orderUiState.orders.filter { it.status == OrderStatus.COMPLETED }
+                            OrderFilter.PENDING -> orderUiState.orders.filter {
+                                it.status == OrderStatus.PENDING || it.status == OrderStatus.PROCESSING
                             }
                         }
-                    }
 
+                        if (filteredOrders.isEmpty()) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(text = "No orders found.")
+                            }
+                        } else {
+                            LazyColumn(
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                items(filteredOrders) { order ->
+                                    OrderCard(
+                                        order = order,
+                                        onClick = { onOrderClick(order) }
+                                    )
+                                }
+                            }
+                        }
+
+                    }
                 }
             }
         }

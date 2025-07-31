@@ -54,14 +54,8 @@ class CartViewModel @Inject constructor(
                             CartUiState.Error("Error fetching cart items")
                         }
                     }.collect { items ->
-                        if (items.isNotEmpty()) {
-                            _cartItems.update {
-                                CartUiState.Success(items)
-                            }
-                        } else {
-                            _cartItems.update {
-                                CartUiState.Error("Cart is empty")
-                            }
+                        _cartItems.update {
+                            CartUiState.Success(items)
                         }
                     }
             }
@@ -105,6 +99,7 @@ class CartViewModel @Inject constructor(
                     _uiEvent.emit(CartUiEvent.Back)
                 }
             }
+
             CartEvent.Retry -> {
 
             }
