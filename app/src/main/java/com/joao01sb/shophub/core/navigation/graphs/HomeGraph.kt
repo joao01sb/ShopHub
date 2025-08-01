@@ -37,7 +37,9 @@ fun NavGraphBuilder.homeGraph(
                     navController.navigate(Routes.Search)
                 },
                 onCartClick = {
-                    navController.navigate(Routes.CartGraph)
+                    navController.navigate(Routes.CartGraph) {
+                        popUpTo(Routes.HomeGraph) { inclusive = true }
+                    }
                 },
                 onClickProduct = {
                     navController.navigate(Routes.Details(it))
@@ -74,7 +76,9 @@ fun NavGraphBuilder.homeGraph(
                     viewModel.onEvent(DetailsEvent.AddToCart)
                 },
                 onNavigateToCart = {
-                    navController.navigate(Routes.CartGraph)
+                    navController.navigate(Routes.CartGraph) {
+                        popUpTo(Routes.HomeGraph) { inclusive = true }
+                    }
                 }
             )
         }
