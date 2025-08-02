@@ -26,26 +26,26 @@ fun NavGraphBuilder.ordersGraph(
         composable<Routes.Orders> {
             val viewModel = hiltViewModel<OrdersViewModel>()
             val ordersState by viewModel.ordersUiState.collectAsStateWithLifecycle()
+
             LaunchedEffect(Unit) {
                 viewModel.orderUiEvent.collect { event ->
                     when (event) {
                         is OrderUiEvent.Logout -> {
                             navController.navigate(Routes.AuthGraph) {
-                                popUpTo(Routes.OrdersGraph) { inclusive = true }
+                                popUpTo(0) { inclusive = true }
                             }
                         }
                     }
                 }
             }
+
             OrdersScreen(
                 orderUiState = ordersState,
-                onOrderClick = { orderId ->
-                    navController.navigate(Routes.DetailsOrder(orderId.id))
+                onOrderClick = { order ->
+                    navController.navigate(Routes.DetailsOrder(order.id))
                 },
                 onBackClick = {
-                    navController.navigate(Routes.HomeGraph) {
-                        popUpTo(Routes.OrdersGraph) { inclusive = true }
-                    }
+                    navController.popBackStack()
                 },
                 onRetry = {
                     viewModel.onEvent(OrdersEvent.RefreshOrders)
@@ -59,10 +59,11 @@ fun NavGraphBuilder.ordersGraph(
         composable<Routes.DetailsOrder> {
             val viewModel = hiltViewModel<DetailsOrderViewModel>()
             val orderDetailsState by viewModel.orderDetailsUiState.collectAsStateWithLifecycle()
+
             OrderDetailsScreen(
                 orderDetalsState = orderDetailsState,
                 onBackClick = {
-                    navController.navigate(Routes.Orders)
+                    navController.popBackStack()
                 },
                 onRetry = {
                     viewModel.onEvent(DetailsOrderEvent.RefreshOrder)

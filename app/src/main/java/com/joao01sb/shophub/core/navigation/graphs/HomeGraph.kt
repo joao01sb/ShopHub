@@ -31,22 +31,23 @@ fun NavGraphBuilder.homeGraph(
         composable<Routes.Home> {
             val viewModel = hiltViewModel<HomeViewModel>()
             val products = viewModel.products.collectAsLazyPagingItems()
+
             HomeScreen(
                 products = products,
                 onSearchClick = {
                     navController.navigate(Routes.Search)
                 },
                 onCartClick = {
-                    navController.navigate(Routes.CartGraph) {
-                        popUpTo(Routes.HomeGraph) { inclusive = true }
+                    navController.navigate(Routes.Cart) {
+                        launchSingleTop = true
                     }
                 },
                 onClickProduct = {
                     navController.navigate(Routes.Details(it))
                 }
             )
-
         }
+
         composable<Routes.Details> {
             val viewModel = hiltViewModel<ProductDetailsViewModel>()
             val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -58,14 +59,14 @@ fun NavGraphBuilder.homeGraph(
                         is DetailsUiEvent.Success -> {
                             Toast.makeText(localContext, event.message, Toast.LENGTH_SHORT).show()
                         }
-
                         is DetailsUiEvent.NavigateToCart -> {
-                            navController.navigate(Routes.CartGraph)
+                            navController.navigate(Routes.Cart) {
+                                launchSingleTop = true
+                            }
                         }
                     }
                 }
             }
-
 
             DetailsProductScreen(
                 uiState = state,
@@ -76,16 +77,16 @@ fun NavGraphBuilder.homeGraph(
                     viewModel.onEvent(DetailsEvent.AddToCart)
                 },
                 onNavigateToCart = {
-                    navController.navigate(Routes.CartGraph) {
-                        popUpTo(Routes.HomeGraph) { inclusive = true }
-                    }
+                    viewModel.onEvent(DetailsEvent.NavigateToCard)
                 }
             )
         }
+
         composable<Routes.Search> {
             val viewModel = hiltViewModel<SearchViewModel>()
             val state by viewModel.uiState.collectAsStateWithLifecycle()
             val products = viewModel.searchResults.collectAsLazyPagingItems()
+
             SearchProductScreen(
                 uiState = state,
                 products = products,

@@ -37,14 +37,10 @@ fun NavGraphBuilder.cartGraph(
                 viewModel.uiEvent.collect { event ->
                     when (event) {
                         CartUiEvent.Back -> {
-                            navController.navigate(Routes.HomeGraph) {
-                                popUpTo(Routes.CartGraph) { inclusive = true }
-                            }
+                            navController.popBackStack()
                         }
                         CartUiEvent.Checkout -> {
-                            navController.navigate(Routes.Checkout) {
-                                popUpTo(Routes.Cart) { inclusive = true }
-                            }
+                            navController.navigate(Routes.Checkout)
                         }
                     }
                 }
@@ -68,25 +64,25 @@ fun NavGraphBuilder.cartGraph(
                     viewModel.onEvent(CartEvent.Retry)
                 }
             )
-
         }
+
         composable<Routes.Checkout> {
             val viewModel = hiltViewModel<CheckoutViewModel>()
             val uiState by viewModel.checkoutSate.collectAsStateWithLifecycle()
-            val currentContex = LocalContext.current
+            val currentContext = LocalContext.current
 
             LaunchedEffect(Unit) {
                 viewModel.checkoutUiEvent.collect { event ->
                     when (event) {
                         is CheckoutUiEvent.Back -> {
-                            navController.navigate(Routes.Cart)
+                            navController.popBackStack()
                         }
                         is CheckoutUiEvent.Error -> {
-                            Toast.makeText(currentContex, event.message, Toast.LENGTH_LONG).show()
+                            Toast.makeText(currentContext, event.message, Toast.LENGTH_LONG).show()
                         }
                         is CheckoutUiEvent.Finaly -> {
-                            navController.navigate(Routes.HomeGraph) {
-                                popUpTo(Routes.AuthGraph) { inclusive = true }
+                            navController.navigate(Routes.Home) {
+                                popUpTo(Routes.CartGraph) { inclusive = true }
                             }
                         }
                     }
@@ -118,9 +114,7 @@ fun NavGraphBuilder.cartGraph(
                     viewModel.onEvent(CheckoutEvent.PhoneChanged(it))
                 },
                 onBack = {
-                    navController.navigate(Routes.Cart) {
-                        popUpTo(Routes.Checkout) { inclusive = true }
-                    }
+                    navController.popBackStack()
                 }
             )
         }
