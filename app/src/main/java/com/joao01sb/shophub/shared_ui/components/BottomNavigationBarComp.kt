@@ -28,10 +28,21 @@ fun BottomNavigationBarComp(
 
     NavigationBar {
         items.forEach { item ->
-            val isSelected = currentRoute?.contains(item.route.toString()) == true
+            val isSelected = when (item.route) {
+                Routes.Home -> currentRoute == Routes.Home.route()
+                Routes.Search -> currentRoute == Routes.Search.route()
+                Routes.Cart -> currentRoute == Routes.Cart.route()
+                Routes.Orders -> currentRoute == Routes.Orders.route()
+                else -> false
+            }
+
             NavigationBarItem(
                 selected = isSelected,
-                onClick = { onNavigate(item.route.route()) },
+                onClick = {
+                    if (!isSelected) {
+                        onNavigate(item.route.route())
+                    }
+                },
                 icon = { Icon(imageVector = item.icon, contentDescription = item.label) },
                 label = { Text(text = item.label) }
             )
