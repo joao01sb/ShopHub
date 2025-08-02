@@ -80,7 +80,6 @@ fun CartItemCard(
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.Gray),
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(
