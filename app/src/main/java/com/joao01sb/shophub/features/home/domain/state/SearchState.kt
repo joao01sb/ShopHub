@@ -1,4 +1,4 @@
-package com.joao01sb.shophub.features.home.domain.enum
+package com.joao01sb.shophub.features.home.domain.state
 
 enum class SearchState {
     RECENT_SEARCHES,
