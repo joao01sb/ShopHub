@@ -8,6 +8,8 @@ import androidx.paging.map
 import com.joao01sb.shophub.core.data.local.ShopHubDatabase
 import com.joao01sb.shophub.core.data.mapper.toDomain
 import com.joao01sb.shophub.core.data.remote.ProductRemoteMediator
+import com.joao01sb.shophub.core.data.remote.dto.PaginatedResponse
+import com.joao01sb.shophub.core.data.remote.dto.ProductDto
 import com.joao01sb.shophub.core.domain.datasource.ProductLocalDataSource
 import com.joao01sb.shophub.core.domain.datasource.ProductRemoteDataSource
 import com.joao01sb.shophub.core.domain.model.Product
@@ -54,15 +56,17 @@ class ProductRepositoryImpl(
         }
     }
 
-    override suspend fun searchProducts(query: String): Flow<PagingData<Product>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = 20,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = { productLocalDataSource.searchProducts(query) }
-        ).flow.map { pagingData ->
-            pagingData.map { it.toDomain() }
+    override suspend fun searchProducts(
+        query: String,
+        page: Int,
+        limit: Int
+    ): Result<PaginatedResponse<ProductDto>> {
+        return try {
+            val skip = (page - 1) * limit
+            val remoteResult = productRemoteDataSource.searchProducts(query, skip, limit)
+            Result.success(remoteResult)
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 }

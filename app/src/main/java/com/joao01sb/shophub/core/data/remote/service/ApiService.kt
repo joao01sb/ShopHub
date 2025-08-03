@@ -17,4 +17,11 @@ interface ApiService {
     @GET("products/{id}")
     suspend fun getProductById(@Path("id") productId: Int): ProductDto
 
+    @GET("products/search")
+    suspend fun searchProducts(
+        @Query("q") query: String,
+        @Query("skip") skip: Int = 0,
+        @Query("limit") limit: Int = 20
+    ): PaginatedResponse<ProductDto>
+
 }

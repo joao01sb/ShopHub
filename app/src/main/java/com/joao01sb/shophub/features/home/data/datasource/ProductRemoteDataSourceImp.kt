@@ -16,4 +16,8 @@ class ProductRemoteDataSourceImp(
     }
 
     override suspend fun getProductById(id: Int): ProductDto  = apiService.getProductById(id)
+
+    override suspend fun searchProducts(query: String, skip: Int, limit: Int): PaginatedResponse<ProductDto> {
+        return apiService.searchProducts(query, skip, limit)
+    }
 }
