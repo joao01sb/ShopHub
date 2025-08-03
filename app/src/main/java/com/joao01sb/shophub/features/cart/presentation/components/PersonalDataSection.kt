@@ -16,7 +16,6 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,12 +23,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.joao01sb.shophub.core.utils.formatPhoneNumber
 import com.joao01sb.shophub.features.cart.domain.model.CheckoutInfo
+import com.joao01sb.shophub.features.cart.presentation.utils.PhoneVisualTransformation
 
 @Composable
 fun PersonalDataSection(
@@ -74,7 +74,8 @@ fun PersonalDataSection(
                 shape = RoundedCornerShape(12.dp),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
-                    capitalization = KeyboardCapitalization.Words
+                    capitalization = KeyboardCapitalization.Words,
+                    imeAction = ImeAction.Next
                 ),
                 singleLine = true
             )
@@ -84,14 +85,18 @@ fun PersonalDataSection(
             OutlinedTextField(
                 value = checkoutInfo.phoneNumber,
                 onValueChange = { newValue ->
-                    val formatted = formatPhoneNumber(newValue)
-                    onPhoneChanged(formatted)
+                    val digitsOnly = newValue.filter { it.isDigit() }.take(11)
+                    onPhoneChanged(digitsOnly)
                 },
                 label = { Text("Phone") },
                 placeholder = { Text("(11) 99999-9999") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Phone,
+                    imeAction = ImeAction.Done
+                ),
+                visualTransformation = PhoneVisualTransformation(),
                 trailingIcon = {
                     Icon(
                         imageVector = Icons.Default.Phone,

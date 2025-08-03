@@ -27,8 +27,11 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+
 
 @Composable
 fun SearchProductBar(
@@ -62,8 +65,17 @@ fun SearchProductBar(
         Spacer(modifier = Modifier.width(8.dp))
         
         TextField(
-            value = query,
-            onValueChange = onQueryChange,
+            value = if (query.isBlank()) {
+                TextFieldValue("")
+            } else {
+                TextFieldValue(
+                    text = query,
+                    selection = TextRange(query.length)
+                )
+            },
+            onValueChange = {
+                onQueryChange(it.text)
+            },
             placeholder = {
                 Text(
                     text = placeholder,

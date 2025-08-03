@@ -85,11 +85,9 @@ fun NavGraphBuilder.homeGraph(
         composable<Routes.Search> {
             val viewModel = hiltViewModel<SearchViewModel>()
             val state by viewModel.uiState.collectAsStateWithLifecycle()
-            val products = viewModel.searchResults.collectAsLazyPagingItems()
 
             SearchProductScreen(
                 uiState = state,
-                products = products,
                 onNavigateToProduct = {
                     navController.navigate(Routes.Details(it.id))
                 },
@@ -105,8 +103,8 @@ fun NavGraphBuilder.homeGraph(
                 onRecentSearchClick = {
                     viewModel.onEvent(SearchEvent.RecentSearchClicked(it))
                 },
-                onHasResults = {
-                    viewModel.handleSearchResults(it)
+                onLoadMore = {
+                    viewModel.onEvent(SearchEvent.LoadMore)
                 }
             )
         }

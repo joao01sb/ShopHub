@@ -26,13 +26,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.joao01sb.shophub.core.utils.formatCardDate
-import com.joao01sb.shophub.core.utils.formatCardNumber
 import com.joao01sb.shophub.features.cart.domain.model.CheckoutInfo
+import com.joao01sb.shophub.features.cart.presentation.utils.CardNumberVisualTransformation
+import com.joao01sb.shophub.features.cart.presentation.utils.ExpiryDateVisualTransformation
 
 @Composable
 fun CardPaymentSection(
@@ -73,14 +74,18 @@ fun CardPaymentSection(
             OutlinedTextField(
                 value = checkoutInfo.numberCard,
                 onValueChange = { newValue: String ->
-                    val formatted = formatCardNumber(newValue)
-                    onCardNumberChanged(formatted)
+                    val digitsOnly = newValue.filter { it.isDigit() }.take(16)
+                    onCardNumberChanged(digitsOnly)
                 },
                 label = { Text("Card number") },
                 placeholder = { Text("1234 5678 9012 3456") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                visualTransformation = CardNumberVisualTransformation(),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
+                ),
                 trailingIcon = {
                     Icon(
                         imageVector = Icons.Default.AccountBox,
@@ -101,7 +106,8 @@ fun CardPaymentSection(
                 shape = RoundedCornerShape(12.dp),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
-                    capitalization = KeyboardCapitalization.Characters
+                    capitalization = KeyboardCapitalization.Characters,
+                    imeAction = ImeAction.Next
                 ),
                 singleLine = true
             )
@@ -115,14 +121,18 @@ fun CardPaymentSection(
                 OutlinedTextField(
                     value = checkoutInfo.dateCard,
                     onValueChange = { newValue: String ->
-                        val formatted = formatCardDate(newValue)
-                        onCardExpiration(formatted)
+                        val digitsOnly = newValue.filter { it.isDigit() }.take(4)
+                        onCardExpiration(digitsOnly)
                     },
                     label = { Text("Validity") },
                     placeholder = { Text("MM/AA") },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(12.dp),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Next
+                    ),
+                    visualTransformation = ExpiryDateVisualTransformation(),
                     trailingIcon = {
                         Icon(
                             imageVector = Icons.Default.DateRange,
@@ -143,7 +153,10 @@ fun CardPaymentSection(
                     placeholder = { Text("123") },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(12.dp),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
                     trailingIcon = {
                         Icon(
                             imageVector = Icons.Default.Lock,

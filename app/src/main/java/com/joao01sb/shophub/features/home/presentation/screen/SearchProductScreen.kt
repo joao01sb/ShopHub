@@ -1,9 +1,7 @@
 package com.joao01sb.shophub.features.home.presentation.screen
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,11 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.paging.LoadState
-import androidx.paging.compose.LazyPagingItems
 import com.joao01sb.shophub.core.domain.model.Product
-import com.joao01sb.shophub.features.home.domain.enum.SearchState
+import com.joao01sb.shophub.features.home.domain.state.SearchState
 import com.joao01sb.shophub.features.home.presentation.state.SearchUiState
 import com.joao01sb.shophub.shared_ui.components.ProductCard
 import com.joao01sb.shophub.shared_ui.components.RecentSearchesContent
@@ -32,29 +29,14 @@ import com.joao01sb.shophub.shared_ui.components.SearchProductBar
 @Composable
 fun SearchProductScreen(
     uiState: SearchUiState,
-    products: LazyPagingItems<Product>,
     onNavigateToProduct: (Product) -> Unit,
     onQueryChange: (String) -> Unit,
     onBackClick: () -> Unit,
     onRetry: () -> Unit,
+    onLoadMore: () -> Unit,
     onRecentSearchClick: (String) -> Unit,
-    onHasResults: (Boolean) -> Unit,
 ) {
-
-    LaunchedEffect(products.loadState) {
-        when (products.loadState.refresh) {
-            is LoadState.NotLoading -> {
-                if (products.itemCount > 0) {
-                    onHasResults(true)
-                }
-            }
-            else -> {}
-        }
-    }
-
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Column(modifier = Modifier.fillMaxSize()) {
         SearchProductBar(
             query = uiState.searchQuery,
             onQueryChange = onQueryChange,
@@ -74,9 +56,7 @@ fun SearchProductScreen(
 
             SearchState.SEARCHING -> {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator()
@@ -85,107 +65,64 @@ fun SearchProductScreen(
 
             SearchState.RESULTS -> {
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    contentPadding = PaddingValues(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    columns = GridCells.Fixed(2)
                 ) {
-                    items(products.itemCount) { index ->
-                        val product = products[index]
-                        if (product != null) {
-                            ProductCard(
-                                product = product,
-                                onClick = { onNavigateToProduct(product) }
-                            )
+                    items(uiState.searchResults.size) { index ->
+                        val product = uiState.searchResults[index]
+
+                        ProductCard(
+                            product = product,
+                            onClick = { onNavigateToProduct(product) }
+                        )
+
+                        if (index >= uiState.searchResults.size - 2 &&
+                            uiState.hasMoreResults &&
+                            !uiState.isLoadingMore) {
+                            LaunchedEffect(Unit) {
+                                onLoadMore()
+                            }
                         }
                     }
 
-                    when (products.loadState.refresh) {
-                        is LoadState.Loading -> {
-                            item(span = { GridItemSpan(2) }) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator()
-                                }
+                    if (uiState.isLoadingMore) {
+                        item(span = { GridItemSpan(2) }) {
+                            Box(
+                                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
                             }
                         }
-                        is LoadState.Error -> {
-                            item(span = { GridItemSpan(2) }) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(text = (products.loadState.refresh as LoadState.Error).error.message ?: "Unknow error")
-                                    Button(
-                                        onClick = { products.retry() }
-                                    ) {
-                                        Text("Retry")
-                                    }
-                                }
-                            }
-                        }
-                        else -> {}
-                    }
-
-                    when (products.loadState.append) {
-                        is LoadState.Loading -> {
-                            item(span = { GridItemSpan(2) }) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator()
-                                }
-                            }
-                        }
-                        is LoadState.Error -> {
-                            item(span = { GridItemSpan(2) }) {
-                                Button(
-                                    onClick = { products.retry() },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp)
-                                ) {
-                                    Text("Retry")
-                                }
-                            }
-                        }
-                        else -> {}
                     }
                 }
             }
 
             SearchState.EMPTY_RESULTS -> {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
+                    modifier = Modifier.fillMaxSize().padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("No results found for: ${uiState.searchQuery}")
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text("Empty results for query:")
+                        Text(
+                            text = "\"${uiState.searchQuery}\"",
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
             }
 
             SearchState.ERROR -> {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
+                    modifier = Modifier.fillMaxSize().padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = uiState.error ?: "Unknow error")
-                    Button(
-                        onClick = onRetry
-                    ) {
-                        Text("Retry")
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(text = uiState.error ?: "Erro desconhecido")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(onClick = onRetry) {
+                            Text("Tentar novamente")
+                        }
                     }
                 }
             }
