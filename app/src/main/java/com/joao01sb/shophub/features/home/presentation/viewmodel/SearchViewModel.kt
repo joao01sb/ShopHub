@@ -2,10 +2,7 @@ package com.joao01sb.shophub.features.home.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import com.joao01sb.shophub.core.domain.model.Product
-import com.joao01sb.shophub.features.home.domain.enum.SearchState
+import com.joao01sb.shophub.features.home.domain.state.SearchState
 import com.joao01sb.shophub.features.home.domain.usecase.GetRecentSearchesUseCase
 import com.joao01sb.shophub.features.home.domain.usecase.SaveRecentSearchUseCase
 import com.joao01sb.shophub.features.home.domain.usecase.SearchProductsUseCase
@@ -13,18 +10,11 @@ import com.joao01sb.shophub.features.home.presentation.event.SearchEvent
 import com.joao01sb.shophub.features.home.presentation.state.SearchUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -37,6 +27,7 @@ class SearchViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
 
+    private var searchJob: Job? = null
 
     init {
         loadRecentSearches()
@@ -46,18 +37,24 @@ class SearchViewModel @Inject constructor(
         when (event) {
             is SearchEvent.QueryChanged -> {
                 updateSearchQuery(event.query)
+                performSearchWithDebounce()
             }
 
             is SearchEvent.RecentSearchClicked -> {
                 updateSearchQuery(event.search)
+                performSearch(resetResults = true)
             }
 
             is SearchEvent.Search -> {
-                performSearch()
+                performSearch(resetResults = true)
+            }
+
+            is SearchEvent.LoadMore -> {
+                loadMoreResults()
             }
 
             is SearchEvent.Retry -> {
-                performSearch()
+                performSearch(resetResults = true)
             }
 
             is SearchEvent.ClearError -> {
@@ -66,53 +63,102 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-    val searchResults: Flow<PagingData<Product>> = _uiState
-        .map { it.searchQuery }
-        .debounce(300)
-        .distinctUntilChanged()
-        .flatMapLatest { query ->
-            if (query.isBlank()) {
-                _uiState.value = _uiState.value.copy(
-                    searchState = SearchState.RECENT_SEARCHES,
-                    isSearching = false,
-                    error = null
-                )
-                flowOf(PagingData.empty())
-            } else if (query.length >= 2) {
-                _uiState.value = _uiState.value.copy(
-                    searchState = SearchState.SEARCHING,
-                    isSearching = true,
-                    error = null
-                )
-                searchProductsUseCase(query)
-                    .catch { e ->
-                        _uiState.value = _uiState.value.copy(
-                            searchState = SearchState.ERROR,
-                            isSearching = false,
-                            error = e.message ?: "Unknow error"
-                        )
-                        emit(PagingData.empty())
-                    }
-            } else {
-                flowOf(PagingData.empty())
-            }
-        }
-        .cachedIn(viewModelScope)
-
     private fun updateSearchQuery(query: String) {
         _uiState.value = _uiState.value.copy(searchQuery = query)
-    }
 
-    private fun performSearch() {
-        val currentQuery = _uiState.value.searchQuery
-        if (currentQuery.isNotBlank()) {
+        if (query.isBlank()) {
             _uiState.value = _uiState.value.copy(
-                isSearching = true,
-                searchState = SearchState.SEARCHING,
+                searchState = SearchState.RECENT_SEARCHES,
+                searchResults = emptyList(),
+                isSearching = false,
                 error = null
             )
         }
+    }
+
+    private fun performSearchWithDebounce() {
+        searchJob?.cancel()
+
+        val query = _uiState.value.searchQuery
+        if (query.length >= 2) {
+            searchJob = viewModelScope.launch {
+                delay(500)
+                performSearch(resetResults = true)
+            }
+        }
+    }
+
+    private fun performSearch(resetResults: Boolean = false) {
+        val query = _uiState.value.searchQuery.trim()
+
+        if (query.isBlank()) return
+        if (query.length < 2) return
+
+        viewModelScope.launch {
+            try {
+                if (resetResults) {
+                    _uiState.value = _uiState.value.copy(
+                        searchState = SearchState.SEARCHING,
+                        isSearching = true,
+                        searchResults = emptyList(),
+                        currentPage = 1,
+                        hasMoreResults = true,
+                        error = null
+                    )
+                }
+
+                val page = if (resetResults) 1 else _uiState.value.currentPage
+                searchProductsUseCase(query, page)
+                    .onSuccess { response ->
+                        val currentResults =
+                            if (resetResults) emptyList() else _uiState.value.searchResults
+                        val newResults = currentResults + response.results
+
+                        _uiState.value = _uiState.value.copy(
+                            searchResults = newResults,
+                            searchState = if (newResults.isEmpty()) SearchState.EMPTY_RESULTS else SearchState.RESULTS,
+                            isSearching = false,
+                            isLoadingMore = false,
+                            currentPage = page + 1,
+                            hasMoreResults = response.hasMore,
+                            error = null
+                        )
+
+                        if (newResults.isNotEmpty() && resetResults) {
+                            saveRecentSearch(query)
+                        }
+                    }
+                    .onFailure { error ->
+                        _uiState.value = _uiState.value.copy(
+                            searchState = SearchState.ERROR,
+                            isSearching = false,
+                            isLoadingMore = false,
+                            error = error.message ?: "Unknown error"
+                        )
+                    }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    searchState = SearchState.ERROR,
+                    isSearching = false,
+                    isLoadingMore = false,
+                    error = e.message ?: "Unknown error"
+                )
+            }
+        }
+    }
+
+    private fun loadMoreResults() {
+        val currentState = _uiState.value
+
+        if (currentState.isLoadingMore ||
+            !currentState.hasMoreResults ||
+            currentState.searchQuery.isBlank()
+        ) {
+            return
+        }
+
+        _uiState.value = _uiState.value.copy(isLoadingMore = true)
+        performSearch(resetResults = false)
     }
 
     private fun loadRecentSearches() {
@@ -120,7 +166,8 @@ class SearchViewModel @Inject constructor(
             try {
                 recentSearchesUseCase()
                     .onSuccess { recentSearches ->
-                        _uiState.value = _uiState.value.copy(recentSearches = recentSearches.map { it.query })
+                        _uiState.value =
+                            _uiState.value.copy(recentSearches = recentSearches.map { it.query })
                     }
                     .onFailure { e ->
                         _uiState.value = _uiState.value.copy(recentSearches = emptyList())
@@ -128,23 +175,6 @@ class SearchViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(recentSearches = emptyList())
             }
-        }
-    }
-
-    fun handleSearchResults(hasResults: Boolean) {
-        val currentQuery = _uiState.value.searchQuery
-
-        _uiState.value = _uiState.value.copy(
-            searchState = if (hasResults) {
-                SearchState.RESULTS
-            } else {
-                SearchState.EMPTY_RESULTS
-            },
-            isSearching = false
-        )
-
-        if (hasResults && currentQuery.isNotBlank()) {
-            saveRecentSearch(currentQuery)
         }
     }
 

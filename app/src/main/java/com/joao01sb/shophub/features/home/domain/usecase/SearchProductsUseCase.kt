@@ -1,16 +1,24 @@
 package com.joao01sb.shophub.features.home.domain.usecase
 
-import androidx.paging.PagingData
-import com.joao01sb.shophub.core.domain.model.Product
+import com.joao01sb.shophub.features.home.domain.model.SearchResult
 import com.joao01sb.shophub.features.home.domain.repository.ProductRepository
-import kotlinx.coroutines.flow.Flow
+import com.joao01sb.shophub.features.home.domain.model.toSearchResult
 
 class SearchProductsUseCase(
     private val repository: ProductRepository
 ) {
 
-    suspend operator fun invoke(query: String) : Flow<PagingData<Product>> {
-        return repository.searchProducts(query)
+    suspend operator fun invoke(query: String, page: Int = 1): Result<SearchResult> {
+        return try {
+            val response = repository.searchProducts(query, page)
+            if (response.isSuccess) {
+                Result.success(response.getOrThrow().toSearchResult())
+            } else {
+                Result.failure(response.exceptionOrNull() ?: Exception("Unknown error"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
 }
