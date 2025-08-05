@@ -1,3 +1,5 @@
+import io.gitlab.arturbosch.detekt.Detekt
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -52,6 +54,22 @@ android {
             isIncludeAndroidResources = true
         }
     }
+
+    allprojects {
+        detekt {
+            toolVersion = libs.versions.detekt.get()
+            config.setFrom(file("$rootDir/config/detekt/detekt.yml"))
+        }
+
+        tasks.withType<Detekt>().configureEach {
+            reports {
+                xml.required.set(false)
+                html.required.set(true)
+                txt.required.set(false)
+            }
+        }
+    }
+
 }
 
 dependencies {
