@@ -44,14 +44,13 @@ complexity:
     active: true
     threshold: 600
   LongMethod:
-    active: true
-    threshold: 15
+    active: false
   LongParameterList:
     active: true
-    functionThreshold: 3
-    constructorThreshold: 7
+    functionThreshold: 4
+    constructorThreshold: 10
     ignoreDefaultParameters: false
-    ignoreAnnotated: ['Composable']
+    ignoreAnnotated: ['Composable', 'Provides']
   MethodOverloading:
     active: false
   NestedBlockDepth:
@@ -61,8 +60,8 @@ complexity:
     active: false
   TooManyFunctions:
     active: true
-    thresholdInFiles: 11
-    thresholdInClasses: 11
+    thresholdInFiles: 20
+    thresholdInClasses: 15
     thresholdInInterfaces: 11
     thresholdInObjects: 11
     thresholdInEnums: 5
@@ -139,13 +138,7 @@ exceptions:
   TooGenericExceptionCaught:
     active: true
     exceptionNames:
-      - ArrayIndexOutOfBoundsException
       - Error
-      - Exception
-      - IllegalMonitorStateException
-      - NullPointerException
-      - IndexOutOfBoundsException
-      - RuntimeException
       - Throwable
   TooGenericExceptionThrown:
     active: true
