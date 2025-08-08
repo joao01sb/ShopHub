@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.joao01sb.shophub.core.domain.manager.AuthManager
 import com.joao01sb.shophub.core.domain.manager.CartManager
 import com.joao01sb.shophub.core.domain.mapper.toCartItem
+import com.joao01sb.shophub.core.result.DomainResult
 import com.joao01sb.shophub.features.home.domain.usecase.GetProductByIdUseCase
 import com.joao01sb.shophub.features.home.presentation.event.DetailsEvent
 import com.joao01sb.shophub.features.home.presentation.event.DetailsUiEvent
@@ -45,7 +46,10 @@ class ProductDetailsViewModel @Inject constructor(
                 userId = it
             }
             .onFailure {
-
+                _uiState.value = _uiState.value.copy(
+                    error = "Failed to retrieve user ID: ${it.message}",
+                    isLoading = false
+                )
             }
     }
 
@@ -62,8 +66,14 @@ class ProductDetailsViewModel @Inject constructor(
 
     private fun addToCart() {
         viewModelScope.launch {
-            cartManager.addItem(userId, _uiState.value.product!!.toCartItem(), 1)
-                .onSuccess {
+            when(val result = cartManager.addItem(userId, _uiState.value.product!!.toCartItem(), 1)) {
+                is DomainResult.Error -> {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = result.message
+                    )
+                }
+                is DomainResult.Success -> {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         error = null,
@@ -73,13 +83,7 @@ class ProductDetailsViewModel @Inject constructor(
                         _uiEvent.emit(DetailsUiEvent.Success("Product added to cart"))
                     }
                 }
-                .onFailure { exception ->
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        error = exception.message
-                    )
-                }
-
+            }
         }
     }
 
@@ -87,20 +91,21 @@ class ProductDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             
-            getProductByIdUseCase(productId)
-                .onSuccess { product ->
+            when(val result = getProductByIdUseCase(productId)) {
+                is DomainResult.Error -> {
                     _uiState.value = _uiState.value.copy(
-                        product = product,
+                        isLoading = false,
+                        error = result.message
+                    )
+                }
+                is DomainResult.Success -> {
+                    _uiState.value = _uiState.value.copy(
+                        product = result.data,
                         isLoading = false,
                         error = null
                     )
                 }
-                .onFailure { exception ->
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        error = exception.message
-                    )
-                }
+            }
         }
     }
 }

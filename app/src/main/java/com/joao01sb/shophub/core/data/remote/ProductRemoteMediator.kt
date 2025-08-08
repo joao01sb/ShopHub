@@ -11,6 +11,8 @@ import com.joao01sb.shophub.core.data.local.entities.RemoteKeysEntity
 import com.joao01sb.shophub.core.data.mapper.toEntity
 import com.joao01sb.shophub.core.domain.datasource.ProductLocalDataSource
 import com.joao01sb.shophub.core.domain.datasource.ProductRemoteDataSource
+import com.joao01sb.shophub.core.result.network.ApiResult
+import com.joao01sb.shophub.core.result.database.DatabaseResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -47,39 +49,53 @@ class ProductRemoteMediator @Inject constructor(
             }
 
             val skip = currentPage * state.config.pageSize
-            val response = productRemoteDataSource.getAllProducts(
+
+            when (val response = productRemoteDataSource.getAllProducts(
                 limit = state.config.pageSize,
                 skip = skip
-            )
+            )) {
+                is ApiResult.Success -> {
+                    val products = response.data.products
+                    val endOfPaginationReached = products.size < state.config.pageSize
 
-            val products = response.products
-            val endOfPaginationReached = products.size < state.config.pageSize
+                    withContext(Dispatchers.IO) {
+                        database.withTransaction {
+                            if (loadType == LoadType.REFRESH) {
+                                database.remoteKeysDao().clearRemoteKeys()
+                                database.productDao().clearProducts()
+                            }
 
-            withContext(Dispatchers.IO) {
-                database.withTransaction {
-                    if (loadType == LoadType.REFRESH) {
-                        database.remoteKeysDao().clearRemoteKeys()
-                        database.productDao().clearProducts()
+                            val prevKey = if (currentPage > 0) currentPage - 1 else null
+                            val nextKey = if (endOfPaginationReached) null else currentPage + 1
+
+                            val remoteKeys = products.map { product ->
+                                RemoteKeysEntity(
+                                    productId = product.id,
+                                    prevKey = prevKey,
+                                    nextKey = nextKey
+                                )
+                            }
+
+                            database.productDao().insertProducts(products.map { it.toEntity() })
+                            database.remoteKeysDao().insertRemoteKeys(remoteKeys)
+                        }
                     }
 
-                    val prevKey = if (currentPage > 0) currentPage - 1 else null
-                    val nextKey = if (endOfPaginationReached) null else currentPage + 1
+                    MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
+                }
 
-                    val remoteKeys = products.map { product ->
-                        RemoteKeysEntity(
-                            productId = product.id,
-                            prevKey = prevKey,
-                            nextKey = nextKey
-                        )
-                    }
+                is ApiResult.NetworkError -> {
+                    MediatorResult.Error(response.exception)
+                }
 
-                    database.productDao().insertProducts(products.map { it.toEntity() })
+                is ApiResult.HttpError -> {
+                    MediatorResult.Error(IOException("HTTP ${response.code}: ${response.message}"))
+                }
 
-                    database.remoteKeysDao().insertRemoteKeys(remoteKeys)
+                is ApiResult.UnknownError -> {
+                    MediatorResult.Error(response.exception)
                 }
             }
-
-            MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (e: IOException) {
             MediatorResult.Error(e)
         } catch (e: HttpException) {
@@ -95,7 +111,10 @@ class ProductRemoteMediator @Inject constructor(
     ): RemoteKeysEntity? {
         return state.anchorPosition?.let { position ->
             state.closestItemToPosition(position)?.id?.let { productId ->
-                productLocalDataSource.getRemoteKeyByProductId(productId)
+                when (val result = productLocalDataSource.getRemoteKeyByProductId(productId)) {
+                    is DatabaseResult.Success -> result.data
+                    else -> null
+                }
             }
         }
     }
@@ -105,7 +124,10 @@ class ProductRemoteMediator @Inject constructor(
     ): RemoteKeysEntity? {
         return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()
             ?.let { product ->
-                productLocalDataSource.getRemoteKeyByProductId(product.id)
+                when (val result = productLocalDataSource.getRemoteKeyByProductId(product.id)) {
+                    is DatabaseResult.Success -> result.data
+                    else -> null
+                }
             }
     }
 
@@ -114,7 +136,10 @@ class ProductRemoteMediator @Inject constructor(
     ): RemoteKeysEntity? {
         return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()
             ?.let { product ->
-                productLocalDataSource.getRemoteKeyByProductId(product.id)
+                when (val result = productLocalDataSource.getRemoteKeyByProductId(product.id)) {
+                    is DatabaseResult.Success -> result.data
+                    else -> null
+                }
             }
     }
 }

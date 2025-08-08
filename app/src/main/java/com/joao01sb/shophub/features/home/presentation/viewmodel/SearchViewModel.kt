@@ -2,6 +2,7 @@ package com.joao01sb.shophub.features.home.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joao01sb.shophub.core.result.DomainResult
 import com.joao01sb.shophub.features.home.domain.state.SearchState
 import com.joao01sb.shophub.features.home.domain.usecase.GetRecentSearchesUseCase
 import com.joao01sb.shophub.features.home.domain.usecase.SaveRecentSearchUseCase
@@ -108,11 +109,19 @@ class SearchViewModel @Inject constructor(
                 }
 
                 val page = if (resetResults) 1 else _uiState.value.currentPage
-                searchProductsUseCase(query, page)
-                    .onSuccess { response ->
+                when(val result = searchProductsUseCase(query, page)) {
+                    is DomainResult.Error -> {
+                        _uiState.value = _uiState.value.copy(
+                            searchState = SearchState.ERROR,
+                            isSearching = false,
+                            isLoadingMore = false,
+                            error = result.message
+                        )
+                    }
+                    is DomainResult.Success -> {
                         val currentResults =
                             if (resetResults) emptyList() else _uiState.value.searchResults
-                        val newResults = currentResults + response.results
+                        val newResults = currentResults + result.data.results
 
                         _uiState.value = _uiState.value.copy(
                             searchResults = newResults,
@@ -120,22 +129,12 @@ class SearchViewModel @Inject constructor(
                             isSearching = false,
                             isLoadingMore = false,
                             currentPage = page + 1,
-                            hasMoreResults = response.hasMore,
+                            hasMoreResults = result.data.hasMore,
                             error = null
                         )
-
-                        if (newResults.isNotEmpty() && resetResults) {
-                            saveRecentSearch(query)
-                        }
+                        saveRecentSearch(query)
                     }
-                    .onFailure { error ->
-                        _uiState.value = _uiState.value.copy(
-                            searchState = SearchState.ERROR,
-                            isSearching = false,
-                            isLoadingMore = false,
-                            error = error.message ?: "Unknown error"
-                        )
-                    }
+                }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     searchState = SearchState.ERROR,
@@ -164,14 +163,15 @@ class SearchViewModel @Inject constructor(
     private fun loadRecentSearches() {
         viewModelScope.launch {
             try {
-                recentSearchesUseCase()
-                    .onSuccess { recentSearches ->
-                        _uiState.value =
-                            _uiState.value.copy(recentSearches = recentSearches.map { it.query })
-                    }
-                    .onFailure { e ->
+                when(val result = recentSearchesUseCase()) {
+                    is DomainResult.Error -> {
                         _uiState.value = _uiState.value.copy(recentSearches = emptyList())
                     }
+                    is DomainResult.Success -> {
+                        _uiState.value =
+                            _uiState.value.copy(recentSearches = result.data.map { it.query })
+                    }
+                }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(recentSearches = emptyList())
             }
