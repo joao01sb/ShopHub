@@ -5,6 +5,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.joao01sb.shophub.core.domain.enums.OrderStatus
 import com.joao01sb.shophub.core.domain.model.CartItem
 import com.joao01sb.shophub.core.domain.model.Order
+import com.joao01sb.shophub.core.result.firebase.FirebaseResult
+import com.joao01sb.shophub.core.result.firebase.safeFirebaseCall
 import com.joao01sb.shophub.features.cart.domain.datasource.CartRemoteDataSource
 import com.joao01sb.shophub.features.cart.domain.model.CheckoutInfo
 import kotlinx.coroutines.cancel
@@ -26,7 +28,7 @@ class CartRemoteDataSourceImpl(
             .collection("cart")
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    cancel("Erro ao ouvir carrinho", error)
+                    cancel("Error listener cart", error)
                     return@addSnapshotListener
                 }
 
@@ -40,7 +42,7 @@ class CartRemoteDataSourceImpl(
         awaitClose { listener.remove() }
     }
 
-    override suspend fun updateItem(userId: String, item: CartItem) {
+    override suspend fun updateItem(userId: String, item: CartItem) : FirebaseResult<Unit> = safeFirebaseCall {
         firestore
             .collection("users")
             .document(userId)
@@ -48,9 +50,10 @@ class CartRemoteDataSourceImpl(
             .document(item.idProduto.toString())
             .set(item)
             .await()
+        Unit
     }
 
-    override suspend fun removeItem(userId: String, productId: String) {
+    override suspend fun removeItem(userId: String, productId: String): FirebaseResult<Unit> = safeFirebaseCall {
         firestore
             .collection("users")
             .document(userId)
@@ -58,9 +61,10 @@ class CartRemoteDataSourceImpl(
             .document(productId)
             .delete()
             .await()
+        Unit
     }
 
-    override suspend fun clearCart(userId: String) {
+    override suspend fun clearCart(userId: String) : FirebaseResult<Unit> = safeFirebaseCall {
         val cartRef = firestore
             .collection("users")
             .document(userId)
@@ -74,7 +78,7 @@ class CartRemoteDataSourceImpl(
         userId: String,
         items: List<CartItem>,
         info: CheckoutInfo
-    ) {
+    ) : FirebaseResult<Unit> = safeFirebaseCall {
         val orderId = UUID.randomUUID().toString()
 
         val total = items.sumOf { it.precoUni * it.quantidade }

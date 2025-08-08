@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joao01sb.shophub.core.domain.manager.AuthManager
 import com.joao01sb.shophub.core.domain.manager.CartManager
+import com.joao01sb.shophub.core.result.DomainResult
 import com.joao01sb.shophub.features.cart.domain.model.CheckoutInfo
 import com.joao01sb.shophub.features.cart.domain.usecase.ValidateCheckoutInfoUseCase
 import com.joao01sb.shophub.features.cart.presentation.event.CheckoutEvent
 import com.joao01sb.shophub.features.cart.presentation.state.CheckoutUiEvent
+import com.joao01sb.shophub.features.cart.presentation.state.CheckoutUiEvent.*
 import com.joao01sb.shophub.features.cart.presentation.state.CheckoutUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -41,7 +43,7 @@ class CheckoutViewModel @Inject constructor(
                 userId = it
             }
             .onFailure {
-
+                userId = null
             }
 
         viewModelScope.launch {
@@ -51,6 +53,8 @@ class CheckoutViewModel @Inject constructor(
                         it.copy(itens = cartItens,)
                     }
                 }
+            } ?: run {
+                _checkoutUiEvent.tryEmit(CheckoutUiEvent.Error("User not authenticated"))
             }
         }
     }
@@ -102,26 +106,27 @@ class CheckoutViewModel @Inject constructor(
 
     private suspend fun placerOrder() {
         try {
-            cartManager.placeOrder(userId!!, _checkoutState.value.itens, CheckoutInfo(
+            when(val result = cartManager.placeOrder(userId!!, _checkoutState.value.itens, CheckoutInfo(
                 numberCard = _checkoutState.value.cardNumber,
                 nameCard = _checkoutState.value.cardHolderName,
                 dateCard = _checkoutState.value.expiryDate,
                 cvvCard = _checkoutState.value.cvv,
                 fullName = _checkoutState.value.fullName,
                 phoneNumber = _checkoutState.value.phone
-            ))
-                .onSuccess {
+            ))){
+                is DomainResult.Success<*> -> {
                     _checkoutState.update {
                         it.copy(isLoading = false)
                     }
                     _checkoutUiEvent.tryEmit(CheckoutUiEvent.Finaly)
                 }
-                .onFailure {
+                is DomainResult.Error -> {
                     _checkoutState.update {
                         it.copy(isLoading = false)
                     }
-                    _checkoutUiEvent.tryEmit(CheckoutUiEvent.Error(it.message ?: "Unknow error"))
+                    _checkoutUiEvent.tryEmit(Error(result.message ?: "Unknow error"))
                 }
+            }
         } catch (e: Exception) {
             _checkoutState.update {
                 it.copy(isLoading = false)
