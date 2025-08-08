@@ -3,6 +3,7 @@ package com.joao01sb.shophub.features.auth.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joao01sb.shophub.core.domain.manager.AuthManager
+import com.joao01sb.shophub.core.result.DomainResult
 import com.joao01sb.shophub.features.auth.presentation.event.AuthEvent
 import com.joao01sb.shophub.features.auth.presentation.event.AuthUiEvent
 import com.joao01sb.shophub.features.auth.domain.usecase.IsUserLoggedInUseCase
@@ -59,6 +60,7 @@ class AuthViewModel @Inject constructor(
                     _uiEvent.emit(AuthUiEvent.NavigateToRegister)
                 }
             }
+
             is AuthEvent.NavigateToLogin -> {
                 viewModelScope.launch {
                     _uiEvent.emit(AuthUiEvent.NavigateToLogin)
@@ -84,20 +86,22 @@ class AuthViewModel @Inject constructor(
 
     private fun login() {
         viewModelScope.launch {
+
             _uiState.update { currentState ->
                 currentState.copy(isLoading = true, error = null)
             }
 
-            authManager.loginUser(email = uiState.value.email, password = uiState.value.password)
-                .onFailure { exception ->
+            when (val result = authManager.loginUser(uiState.value.email, uiState.value.password)) {
+                is DomainResult.Error -> {
                     _uiState.update { currentState ->
                         currentState.copy(
                             isLoading = false,
-                            error = exception.message
+                            error = result.message
                         )
                     }
                 }
-                .onSuccess {
+
+                is DomainResult.Success<*> -> {
                     _uiState.update { currentState ->
                         currentState.copy(
                             isLoading = false,
@@ -107,25 +111,33 @@ class AuthViewModel @Inject constructor(
                     _isAuthenticated.value = true
                     _uiEvent.emit(AuthUiEvent.NavigateToHome)
                 }
+            }
         }
     }
 
     private fun register() {
         viewModelScope.launch {
+
             _uiState.update { currentState ->
                 currentState.copy(isLoading = true, error = null)
             }
 
-            authManager.registerUser(uiState.value.email, uiState.value.password, uiState.value.name)
-                .onFailure { exception ->
+            when (val result = authManager.registerUser(
+                uiState.value.email,
+                uiState.value.password,
+                uiState.value.name
+            )) {
+                is DomainResult.Error -> {
                     _uiState.update { currentState ->
                         currentState.copy(
                             isLoading = false,
-                            error = exception.message
+                            error = result.message
                         )
                     }
+
                 }
-                .onSuccess {
+
+                is DomainResult.Success<*> -> {
                     _uiState.update { currentState ->
                         currentState.copy(
                             isLoading = false,
@@ -135,6 +147,7 @@ class AuthViewModel @Inject constructor(
                     clearState()
                     _uiEvent.emit(AuthUiEvent.NavigateToLogin)
                 }
+            }
         }
     }
 

@@ -26,17 +26,17 @@ object AuthModule {
 
     @Provides
     fun provideAuthRemoteDataSource(
-        firebaseAuth: FirebaseAuth
+        firebaseAuth: FirebaseAuth,
+        firestore: FirebaseFirestore
     ) : AuthRemoteDataSource {
-        return AuthRemoteDataSourceImp(firebaseAuth)
+        return AuthRemoteDataSourceImp(firebaseAuth, firestore)
     }
 
     @Provides
     fun provideAuthRepository(
-        authRemoteDataSource: AuthRemoteDataSource,
-        firestore: FirebaseFirestore
+        authRemoteDataSource: AuthRemoteDataSource
     ) : AuthRepository {
-        return AuthRepositoryImp(authRemoteDataSource,firestore)
+        return AuthRepositoryImp(authRemoteDataSource)
     }
 
     @Provides
