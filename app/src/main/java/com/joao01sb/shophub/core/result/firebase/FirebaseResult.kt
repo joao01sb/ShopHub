@@ -1,4 +1,4 @@
-package com.joao01sb.shophub.core.domain.result
+package com.joao01sb.shophub.core.result.firebase
 
 sealed class FirebaseResult<out T> {
     data class Success<T>(val data: T) : FirebaseResult<T>()

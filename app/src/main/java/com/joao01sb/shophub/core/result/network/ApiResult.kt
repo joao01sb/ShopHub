@@ -1,4 +1,4 @@
-package com.joao01sb.shophub.core.domain.result
+package com.joao01sb.shophub.core.result.network
 
 import java.io.IOException
 
