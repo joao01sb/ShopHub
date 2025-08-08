@@ -3,6 +3,8 @@ package com.joao01sb.shophub.features.orders.data.datasource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joao01sb.shophub.core.domain.model.Order
+import com.joao01sb.shophub.core.result.firebase.FirebaseResult
+import com.joao01sb.shophub.core.result.firebase.safeFirebaseCall
 import com.joao01sb.shophub.features.orders.domain.datasource.RemoteOrdersDataSource
 import kotlinx.coroutines.tasks.await
 
@@ -13,7 +15,7 @@ class RemoteOrdersDataSourceImp(
 
     override suspend fun getOrders(
         userId: String
-    ): List<Order> {
+    ): FirebaseResult<List<Order>> = safeFirebaseCall{
         val snapshot = firestore
             .collection("users")
             .document(userId)
@@ -21,7 +23,7 @@ class RemoteOrdersDataSourceImp(
             .get()
             .await()
 
-        return snapshot.documents.mapNotNull { it.toObject(Order::class.java) }
+        snapshot.documents.mapNotNull { it.toObject(Order::class.java) }
     }
 
     override fun getCurrentUserId(): String? {
@@ -31,7 +33,7 @@ class RemoteOrdersDataSourceImp(
     override suspend fun getOrderById(
         userId: String,
         orderId: String
-    ): Order? {
+    ): FirebaseResult<Order?> = safeFirebaseCall {
         val document = firestore
             .collection("users")
             .document(userId)
@@ -41,11 +43,11 @@ class RemoteOrdersDataSourceImp(
             .await()
 
         if (!document.exists()) {
-            return null
+            null
         } else if (document.data.isNullOrEmpty()) {
             throw IllegalStateException("Order data is empty")
         }
 
-        return document.toObject(Order::class.java)
+        document.toObject(Order::class.java)
     }
 }

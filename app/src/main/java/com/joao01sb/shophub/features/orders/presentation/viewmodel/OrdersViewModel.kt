@@ -3,6 +3,7 @@ package com.joao01sb.shophub.features.orders.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joao01sb.shophub.core.domain.manager.AuthManager
+import com.joao01sb.shophub.core.result.DomainResult
 import com.joao01sb.shophub.features.orders.domain.usecase.GetOrdersUseCase
 import com.joao01sb.shophub.features.orders.presentation.event.OrderUiEvent
 import com.joao01sb.shophub.features.orders.presentation.state.OrdersEvent
@@ -30,7 +31,7 @@ class OrdersViewModel @Inject constructor(
                 userId = it
             }
             .onFailure {
-
+                userId = null
             }
         viewModelScope.launch {
             getOrders()
@@ -45,13 +46,14 @@ class OrdersViewModel @Inject constructor(
 
     suspend fun getOrders() {
         userId?.let { id ->
-            getOrdersUseCase(id)
-                .onSuccess { orders ->
-                    _ordersUiState.value = OrdersUiState.Success(orders)
+            when(val result = getOrdersUseCase(id)) {
+                is DomainResult.Success -> {
+                    _ordersUiState.value = OrdersUiState.Success(result.data)
                 }
-                .onFailure { error ->
-                    _ordersUiState.value = OrdersUiState.Error(error.message ?: "Unknown error")
+                is DomainResult.Error -> {
+                    _ordersUiState.value = OrdersUiState.Error(result.message ?: "Unknown error")
                 }
+            }
         } ?: run {
             _ordersUiState.value = OrdersUiState.Error("User not authenticated")
         }
@@ -67,11 +69,14 @@ class OrdersViewModel @Inject constructor(
             }
             is OrdersEvent.Logout -> {
                 viewModelScope.launch {
-                    try {
-                        authManager.logoutUser()
-                        _orderUiEvent.tryEmit(OrderUiEvent.Logout)
-                    } catch (e: Exception) {
-                        _ordersUiState.value = OrdersUiState.Error("Erro ao fazer logout: ${e.message}")
+
+                    when(val result = authManager.logoutUser()) {
+                        is DomainResult.Success -> {
+                            _orderUiEvent.tryEmit(OrderUiEvent.Logout)
+                        }
+                        is DomainResult.Error -> {
+                            _ordersUiState.value = OrdersUiState.Error("Erro ao fazer logout: ${result.message}")
+                        }
                     }
                 }
             }

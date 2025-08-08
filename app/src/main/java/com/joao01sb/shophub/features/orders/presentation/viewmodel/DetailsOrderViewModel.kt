@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joao01sb.shophub.core.domain.manager.AuthManager
+import com.joao01sb.shophub.core.result.DomainResult
 import com.joao01sb.shophub.features.orders.domain.usecase.GetOrderByIdUseCase
 import com.joao01sb.shophub.features.orders.presentation.state.DetailsOrderEvent
 import com.joao01sb.shophub.features.orders.presentation.state.OrderDetailsUiState
@@ -54,13 +55,19 @@ class DetailsOrderViewModel @Inject constructor(
 
     suspend fun getOrderDetails() {
         userId?.let { id ->
-            getOrderByIdUseCase(id, orderId)
-                .onSuccess { order ->
-                    _orderDetailsUiState.value = OrderDetailsUiState.Success(order)
+            when(val result = getOrderByIdUseCase(id, orderId)) {
+                is DomainResult.Error -> {
+                    _orderDetailsUiState.value = OrderDetailsUiState.Error(result.message ?: "Unknown error")
                 }
-                .onFailure { error ->
-                    _orderDetailsUiState.value = OrderDetailsUiState.Error(error.message ?: "Unknown error")
+                is DomainResult.Success -> {
+                    val order = result.data
+                    if (order != null) {
+                        _orderDetailsUiState.value = OrderDetailsUiState.Success(order)
+                    } else {
+                        _orderDetailsUiState.value = OrderDetailsUiState.Error("Order not found")
+                    }
                 }
+            }
         } ?: run {
             _orderDetailsUiState.value = OrderDetailsUiState.Error("User not authenticated")
         }
