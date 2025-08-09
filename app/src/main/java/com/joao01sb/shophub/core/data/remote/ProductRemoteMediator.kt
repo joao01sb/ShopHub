@@ -48,54 +48,8 @@ class ProductRemoteMediator @Inject constructor(
                 }
             }
 
-            val skip = currentPage * state.config.pageSize
+            resultProducts(currentPage, state, loadType)
 
-            when (val response = productRemoteDataSource.getAllProducts(
-                limit = state.config.pageSize,
-                skip = skip
-            )) {
-                is ApiResult.Success -> {
-                    val products = response.data.products
-                    val endOfPaginationReached = products.size < state.config.pageSize
-
-                    withContext(Dispatchers.IO) {
-                        database.withTransaction {
-                            if (loadType == LoadType.REFRESH) {
-                                database.remoteKeysDao().clearRemoteKeys()
-                                database.productDao().clearProducts()
-                            }
-
-                            val prevKey = if (currentPage > 0) currentPage - 1 else null
-                            val nextKey = if (endOfPaginationReached) null else currentPage + 1
-
-                            val remoteKeys = products.map { product ->
-                                RemoteKeysEntity(
-                                    productId = product.id,
-                                    prevKey = prevKey,
-                                    nextKey = nextKey
-                                )
-                            }
-
-                            database.productDao().insertProducts(products.map { it.toEntity() })
-                            database.remoteKeysDao().insertRemoteKeys(remoteKeys)
-                        }
-                    }
-
-                    MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
-                }
-
-                is ApiResult.NetworkError -> {
-                    MediatorResult.Error(response.exception)
-                }
-
-                is ApiResult.HttpError -> {
-                    MediatorResult.Error(IOException("HTTP ${response.code}: ${response.message}"))
-                }
-
-                is ApiResult.UnknownError -> {
-                    MediatorResult.Error(response.exception)
-                }
-            }
         } catch (e: IOException) {
             MediatorResult.Error(e)
         } catch (e: HttpException) {
@@ -103,6 +57,61 @@ class ProductRemoteMediator @Inject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
             MediatorResult.Error(e)
+        }
+    }
+
+    private suspend fun resultProducts(
+        currentPage: Int,
+        state: PagingState<Int, ProductEntity>,
+        loadType: LoadType
+    ): MediatorResult {
+        val skip = currentPage * state.config.pageSize
+
+        return when (val response = productRemoteDataSource.getAllProducts(
+            limit = state.config.pageSize,
+            skip = skip
+        )) {
+            is ApiResult.Success -> {
+                val products = response.data.products
+                val endOfPaginationReached = products.size < state.config.pageSize
+
+                withContext(Dispatchers.IO) {
+                    database.withTransaction {
+                        if (loadType == LoadType.REFRESH) {
+                            database.remoteKeysDao().clearRemoteKeys()
+                            database.productDao().clearProducts()
+                        }
+
+                        val prevKey = if (currentPage > 0) currentPage - 1 else null
+                        val nextKey = if (endOfPaginationReached) null else currentPage + 1
+
+                        val remoteKeys = products.map { product ->
+                            RemoteKeysEntity(
+                                productId = product.id,
+                                prevKey = prevKey,
+                                nextKey = nextKey
+                            )
+                        }
+
+                        database.productDao().insertProducts(products.map { it.toEntity() })
+                        database.remoteKeysDao().insertRemoteKeys(remoteKeys)
+                    }
+                }
+
+                MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
+            }
+
+            is ApiResult.NetworkError -> {
+                MediatorResult.Error(response.exception)
+            }
+
+            is ApiResult.HttpError -> {
+                MediatorResult.Error(IOException("HTTP ${response.code}: ${response.message}"))
+            }
+
+            is ApiResult.UnknownError -> {
+                MediatorResult.Error(response.exception)
+            }
         }
     }
 

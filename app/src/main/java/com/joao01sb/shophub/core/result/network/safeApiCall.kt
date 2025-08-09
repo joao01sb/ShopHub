@@ -41,7 +41,3 @@ suspend fun <T> safeApiCall(
         }
     }
 }
-
-suspend fun <T> (() -> T).safeApiCall(
-    dispatcher: CoroutineDispatcher = Dispatchers.IO
-): ApiResult<T> = safeApiCall(dispatcher, this)

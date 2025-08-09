@@ -20,7 +20,3 @@ suspend fun <T> safeDatabaseCall(
         }
     }
 }
-
-suspend fun <T> (() -> T).safeDatabaseCall(
-    dispatcher: CoroutineDispatcher = Dispatchers.IO
-): DatabaseResult<T> = safeDatabaseCall(dispatcher, this)
