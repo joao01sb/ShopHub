@@ -105,6 +105,9 @@ fun NavGraphBuilder.homeGraph(
                 },
                 onLoadMore = {
                     viewModel.onEvent(SearchEvent.LoadMore)
+                },
+                onClearRecentSearches = {
+                    viewModel.onEvent(SearchEvent.ClearRecentSearches(it))
                 }
             )
         }

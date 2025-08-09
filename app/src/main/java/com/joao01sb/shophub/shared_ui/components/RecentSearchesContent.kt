@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.dp
 fun RecentSearchesContent(
     recentSearches: List<String>,
     onRecentSearchClick: (String) -> Unit,
+    onClearRecentSearches: (query: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (recentSearches.isNotEmpty()) {
@@ -54,7 +56,7 @@ fun RecentSearchesContent(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Refresh,
-                            contentDescription = null,
+                            contentDescription = "Recent search icon",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(20.dp)
                         )
@@ -69,10 +71,13 @@ fun RecentSearchesContent(
                         )
 
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Send,
-                            contentDescription = null,
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = "Clear recent search",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(16.dp)
+                                .clickable {
+                                    onClearRecentSearches(search)
+                                }
                         )
                     }
                 }

@@ -2,8 +2,10 @@ package com.joao01sb.shophub.features.home.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joao01sb.shophub.core.domain.manager.AuthManager
 import com.joao01sb.shophub.core.result.DomainResult
 import com.joao01sb.shophub.features.home.domain.state.SearchState
+import com.joao01sb.shophub.features.home.domain.usecase.ClearSearchUseCase
 import com.joao01sb.shophub.features.home.domain.usecase.GetRecentSearchesUseCase
 import com.joao01sb.shophub.features.home.domain.usecase.SaveRecentSearchUseCase
 import com.joao01sb.shophub.features.home.domain.usecase.SearchProductsUseCase
@@ -22,15 +24,28 @@ import kotlinx.coroutines.launch
 class SearchViewModel @Inject constructor(
     private val searchProductsUseCase: SearchProductsUseCase,
     private val recentSearchesUseCase: GetRecentSearchesUseCase,
-    private val saveRecentSearchUseCase: SaveRecentSearchUseCase
+    private val saveRecentSearchUseCase: SaveRecentSearchUseCase,
+    private val clearSearchUseCase: ClearSearchUseCase,
+    private val authManager: AuthManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
 
+    private var userId: String? = null
+
     private var searchJob: Job? = null
 
     init {
+        authManager.getCurrentUserId()
+            .onSuccess { id ->
+                userId = id
+            }
+            .onFailure { error ->
+                _uiState.value =
+                    _uiState.value.copy(error = "Failed to retrieve user ID: ${error.message}")
+            }
+
         loadRecentSearches()
     }
 
@@ -60,6 +75,10 @@ class SearchViewModel @Inject constructor(
 
             is SearchEvent.ClearError -> {
                 _uiState.value = _uiState.value.copy(error = null)
+            }
+
+            is SearchEvent.ClearRecentSearches -> {
+                clearRecentSearches(event.query)
             }
         }
     }
@@ -109,7 +128,7 @@ class SearchViewModel @Inject constructor(
                 }
 
                 val page = if (resetResults) 1 else _uiState.value.currentPage
-                when(val result = searchProductsUseCase(query, page)) {
+                when (val result = searchProductsUseCase(query, page)) {
                     is DomainResult.Error -> {
                         _uiState.value = _uiState.value.copy(
                             searchState = SearchState.ERROR,
@@ -118,6 +137,7 @@ class SearchViewModel @Inject constructor(
                             error = result.message
                         )
                     }
+
                     is DomainResult.Success -> {
                         val currentResults =
                             if (resetResults) emptyList() else _uiState.value.searchResults
@@ -162,26 +182,49 @@ class SearchViewModel @Inject constructor(
 
     private fun loadRecentSearches() {
         viewModelScope.launch {
-            try {
-                when(val result = recentSearchesUseCase()) {
+            userId?.let { userId ->
+                when (val result = recentSearchesUseCase(userId)) {
                     is DomainResult.Error -> {
                         _uiState.value = _uiState.value.copy(recentSearches = emptyList())
                     }
+
                     is DomainResult.Success -> {
                         _uiState.value =
-                            _uiState.value.copy(recentSearches = result.data.map { it.query })
+                            _uiState.value.copy(recentSearches = result.data.map { it.queryKey })
                     }
                 }
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(recentSearches = emptyList())
+            } ?: run {
+                _uiState.value = _uiState.value.copy(
+                    error = "User not authenticated",
+                    recentSearches = emptyList()
+                )
             }
         }
     }
 
     private fun saveRecentSearch(query: String) {
         viewModelScope.launch {
-            saveRecentSearchUseCase(query)
+            userId?.let { userId ->
+                saveRecentSearchUseCase(userId,query)
+            } ?: run {
+                _uiState.value = _uiState.value.copy(error = "User not authenticated")
+            }
             loadRecentSearches()
+        }
+    }
+
+    fun clearRecentSearches(query: String) {
+        viewModelScope.launch {
+            userId?.let { userId ->
+                when(clearSearchUseCase(userId, query)) {
+                    is DomainResult.Error -> Unit
+                    is DomainResult.Success -> {
+                        loadRecentSearches()
+                    }
+                }
+            } ?: run {
+                _uiState.value = _uiState.value.copy(error = "User not authenticated")
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.joao01sb.shophub.core.navigation
 
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,11 +34,13 @@ fun NavigationGraph(
         authViewModel.uiEvent.collect { event ->
             when (event) {
                 AuthUiEvent.NavigateToHome -> {
+                    Toast.makeText(navController.context, "Logged in", Toast.LENGTH_SHORT).show()
                     navController.navigate(Routes.HomeGraph) {
                         popUpTo(Routes.AuthGraph) { inclusive = true }
                     }
                 }
                 AuthUiEvent.NavigateToLogin -> {
+                    Toast.makeText(navController.context, "Success in creat user", Toast.LENGTH_SHORT).show()
                     navController.navigate(Routes.Login) {
                         popUpTo(Routes.AuthGraph) {
                             inclusive = false

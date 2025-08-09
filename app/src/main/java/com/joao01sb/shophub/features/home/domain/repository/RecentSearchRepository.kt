@@ -7,6 +7,8 @@ interface RecentSearchRepository {
 
     suspend fun insert(recentSearch: RecentSearchEntity) : DomainResult<Unit>
 
-    suspend fun getRecentSearches(): DomainResult<List<RecentSearchEntity>>
+    suspend fun getRecentSearches(userId: String): DomainResult<List<RecentSearchEntity>>
+
+    suspend fun clearRecentSearches(userId: String, query: String) : DomainResult<Unit>
 
 }

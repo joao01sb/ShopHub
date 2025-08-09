@@ -35,6 +35,7 @@ fun SearchProductScreen(
     onRetry: () -> Unit,
     onLoadMore: () -> Unit,
     onRecentSearchClick: (String) -> Unit,
+    onClearRecentSearches: (String) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         SearchProductBar(
@@ -50,7 +51,8 @@ fun SearchProductScreen(
             SearchState.RECENT_SEARCHES -> {
                 RecentSearchesContent(
                     recentSearches = uiState.recentSearches,
-                    onRecentSearchClick = onRecentSearchClick
+                    onRecentSearchClick = onRecentSearchClick,
+                    onClearRecentSearches = onClearRecentSearches
                 )
             }
 

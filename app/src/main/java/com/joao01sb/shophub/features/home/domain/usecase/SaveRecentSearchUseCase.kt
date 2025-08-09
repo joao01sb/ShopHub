@@ -8,9 +8,10 @@ class SaveRecentSearchUseCase(
     private val repository: RecentSearchRepository
 ) {
 
-    suspend operator fun invoke(query: String) : DomainResult<Unit> {
+    suspend operator fun invoke(userId: String, query: String) : DomainResult<Unit> {
         val recentSearch = RecentSearchEntity(
-            query = query
+            queryKey = query,
+            userId = userId
         )
         return repository.insert(recentSearch)
     }

@@ -7,4 +7,5 @@ sealed interface SearchEvent {
     object LoadMore : SearchEvent
     object Retry : SearchEvent
     object ClearError : SearchEvent
+    data class ClearRecentSearches(val query: String) : SearchEvent
 }
