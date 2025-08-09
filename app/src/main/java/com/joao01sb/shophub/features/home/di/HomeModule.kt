@@ -15,6 +15,7 @@ import com.joao01sb.shophub.features.home.data.repository.ProductRepositoryImpl
 import com.joao01sb.shophub.features.home.data.repository.RecentSearchRepositoryImp
 import com.joao01sb.shophub.features.home.domain.repository.ProductRepository
 import com.joao01sb.shophub.features.home.domain.repository.RecentSearchRepository
+import com.joao01sb.shophub.features.home.domain.usecase.ClearSearchUseCase
 import com.joao01sb.shophub.features.home.domain.usecase.GetAllproductsUseCase
 import com.joao01sb.shophub.features.home.domain.usecase.GetProductByIdUseCase
 import com.joao01sb.shophub.features.home.domain.usecase.GetRecentSearchesUseCase
@@ -105,6 +106,13 @@ object HomeModule {
         recentSearchRepository: RecentSearchRepository
     ) : SaveRecentSearchUseCase {
         return SaveRecentSearchUseCase(recentSearchRepository)
+    }
+
+    @Provides
+    fun provideClearSearchesUseCase(
+        recentSearchRepository: RecentSearchRepository
+    ) : ClearSearchUseCase {
+        return ClearSearchUseCase(recentSearchRepository)
     }
 
 }

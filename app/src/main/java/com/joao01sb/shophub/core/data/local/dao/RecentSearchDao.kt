@@ -12,8 +12,10 @@ interface RecentSearchDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(recentSearch: RecentSearchEntity)
 
-    @Query("SELECT * FROM recent_searches ORDER BY timestamp DESC LIMIT 10")
-    suspend fun getRecentSearches(): List<RecentSearchEntity>
+    @Query("SELECT * FROM recent_searches WHERE userId = :userId ORDER BY timestamp DESC LIMIT 10")
+    suspend fun getRecentSearches(userId: String): List<RecentSearchEntity>
 
+    @Query("DELETE FROM recent_searches WHERE userId = :userId AND queryKey = :query")
+    suspend fun clearRecentSearches(userId: String, query: String)
 
 }

@@ -7,7 +7,8 @@ interface RecentSearchDataSource {
 
     suspend fun insert(recentSearch: RecentSearchEntity) : DatabaseResult<Unit>
 
-    suspend fun getRecentSearches(): DatabaseResult<List<RecentSearchEntity>>
+    suspend fun getRecentSearches(userId: String): DatabaseResult<List<RecentSearchEntity>>
 
+    suspend fun clearRecentSearches(userId: String, query: String) : DatabaseResult<Unit>
 
 }
