@@ -114,7 +114,7 @@ class CheckoutViewModel @Inject constructor(
                 fullName = _checkoutState.value.fullName,
                 phoneNumber = _checkoutState.value.phone
             ))){
-                is DomainResult.Success<*> -> {
+                is DomainResult.Success -> {
                     _checkoutState.update {
                         it.copy(isLoading = false)
                     }

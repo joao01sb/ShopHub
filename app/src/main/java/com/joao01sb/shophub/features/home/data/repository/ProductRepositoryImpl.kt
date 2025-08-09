@@ -50,8 +50,8 @@ class ProductRepositoryImpl(
 
     override suspend fun getProductById(id: Int): DomainResult<Product> {
         return when (val localResult = productLocalDataSource.getProductById(id)) {
-            is DatabaseResult.Success<*> -> {
-                val localProduct = localResult.data as? ProductEntity
+            is DatabaseResult.Success -> {
+                val localProduct = localResult.data
                 if (localProduct != null) {
                     return Success(localProduct.toDomain())
                 } else {
@@ -65,8 +65,8 @@ class ProductRepositoryImpl(
                                 ErrorType.NETWORK
                             )
 
-                        is ApiResult.Success<*> -> {
-                            val remoteProduct = remoteResult.data as ProductDto
+                        is ApiResult.Success -> {
+                            val remoteProduct = remoteResult.data
                             return Success(remoteProduct.toDomain())
                         }
 
@@ -90,8 +90,8 @@ class ProductRepositoryImpl(
                             ErrorType.NETWORK
                         )
 
-                    is ApiResult.Success<*> -> {
-                        val remoteProduct = remoteResult.data as ProductDto
+                    is ApiResult.Success -> {
+                        val remoteProduct = remoteResult.data
                         return Success(remoteProduct.toDomain())
                     }
 
@@ -119,8 +119,8 @@ class ProductRepositoryImpl(
             is ApiResult.NetworkError ->
                 Error(remoteResult.exception.message ?: "Unknown error", ErrorType.NETWORK)
 
-            is ApiResult.Success<*> -> {
-                val remoteProducts = remoteResult.data as PaginatedResponse<ProductDto>
+            is ApiResult.Success -> {
+                val remoteProducts = remoteResult.data
                 Success(remoteProducts)
             }
 

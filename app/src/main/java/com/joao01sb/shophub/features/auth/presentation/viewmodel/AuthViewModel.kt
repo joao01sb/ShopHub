@@ -101,7 +101,7 @@ class AuthViewModel @Inject constructor(
                     }
                 }
 
-                is DomainResult.Success<*> -> {
+                is DomainResult.Success -> {
                     _uiState.update { currentState ->
                         currentState.copy(
                             isLoading = false,
@@ -137,7 +137,7 @@ class AuthViewModel @Inject constructor(
 
                 }
 
-                is DomainResult.Success<*> -> {
+                is DomainResult.Success -> {
                     _uiState.update { currentState ->
                         currentState.copy(
                             isLoading = false,
