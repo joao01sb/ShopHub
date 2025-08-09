@@ -9,11 +9,19 @@ class RegisterUseCase(
 ) {
 
     suspend operator fun invoke(email: String, password: String, name: String): DomainResult<Unit> {
+
+        if (email.isBlank() || password.isBlank() || name.isBlank()) {
+            return DomainResult.Error(
+                message = "Email, password, and name cannot be empty",
+                type = ErrorType.VALIDATION
+            )
+        }
+
         when (val authResult = repository.register(email, password, name)) {
             is DomainResult.Success -> {
                 val uid = repository.getUserId()
-                if (uid != null) {
-                    return when (val userResult = repository.saveUser(uid, email, name)) {
+                return if (uid != null) {
+                    when (val userResult = repository.saveUser(uid, email, name)) {
                         is DomainResult.Success -> DomainResult.Success(Unit)
                         is DomainResult.Error -> {
                             repository.logout()
@@ -21,7 +29,7 @@ class RegisterUseCase(
                         }
                     }
                 } else {
-                    return DomainResult.Error(
+                    DomainResult.Error(
                         message = "Failed to get user ID after registration",
                         type = ErrorType.AUTHENTICATION
                     )

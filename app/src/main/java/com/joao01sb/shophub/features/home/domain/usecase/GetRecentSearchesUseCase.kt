@@ -8,8 +8,8 @@ class GetRecentSearchesUseCase(
     private val repository: RecentSearchRepository
 ) {
 
-    suspend operator fun invoke() : DomainResult<List<RecentSearchEntity>> {
-        return when(val result = repository.getRecentSearches()) {
+    suspend operator fun invoke(userId: String) : DomainResult<List<RecentSearchEntity>> {
+        return when(val result = repository.getRecentSearches(userId)) {
             is DomainResult.Success -> DomainResult.Success(result.data)
             is DomainResult.Error -> result
         }
