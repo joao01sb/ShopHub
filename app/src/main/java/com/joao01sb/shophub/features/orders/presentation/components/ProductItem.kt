@@ -38,7 +38,7 @@ fun ProductItem(item: CartItem) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = getCategoryIcon(item.categoria),
+                text = getCategoryIcon(item.category),
                 fontSize = 20.sp
             )
         }
@@ -47,14 +47,14 @@ fun ProductItem(item: CartItem) {
 
         Column(modifier = Modifier.weight(ConstantsFloat.const_10)) {
             Text(
-                text = item.nome,
+                text = item.name,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = TextDarkGray
             )
 
             Text(
-                text = item.categoria,
+                text = item.category,
                 fontSize = 12.sp,
                 color = TextGray
             )
@@ -65,7 +65,7 @@ fun ProductItem(item: CartItem) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Qtd: ${item.quantidade}",
+                    text = "Qtd: ${item.quantity}",
                     fontSize = 14.sp,
                     color = TextGray
                 )
@@ -73,7 +73,7 @@ fun ProductItem(item: CartItem) {
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    text = "$ %.2f".format(item.precoUni * item.quantidade),
+                    text = "$ %.2f".format(item.uniPrice * item.quantity),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = PrimaryBlue

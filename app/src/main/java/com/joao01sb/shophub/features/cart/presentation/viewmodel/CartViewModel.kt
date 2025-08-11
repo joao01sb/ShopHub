@@ -43,18 +43,22 @@ class CartViewModel @Inject constructor(
 
         viewModelScope.launch {
             userId?.let {
-                cartManager.getItems(it)
-                    .catch {
-                        _cartItems.update {
-                            CartUiState.Error("Error fetching cart items")
-                        }
-                    }.collect { items ->
-                        _cartItems.update {
-                            CartUiState.Success(items)
-                        }
-                    }
+                loadProducts(it)
             }
         }
+    }
+
+    private suspend fun loadProducts(string: String) {
+        cartManager.getItems(string)
+            .catch {
+                _cartItems.update {
+                    CartUiState.Error("Error fetching cart items")
+                }
+            }.collect { items ->
+                _cartItems.update {
+                    CartUiState.Success(items)
+                }
+            }
     }
 
     fun onEvent(event: CartEvent) {
@@ -70,7 +74,7 @@ class CartViewModel @Inject constructor(
             is CartEvent.RemoveCartItem -> {
                 userId?.let {
                     viewModelScope.launch {
-                        cartManager.removeItem(it, event.cartItem.idProduto.toString())
+                        cartManager.removeItem(it, event.cartItem.productId.toString())
                     }
                 }
             }
@@ -96,7 +100,11 @@ class CartViewModel @Inject constructor(
             }
 
             CartEvent.Retry -> {
-
+                userId?.let { userId ->
+                    viewModelScope.launch {
+                        loadProducts(userId)
+                    }
+                }
             }
         }
     }

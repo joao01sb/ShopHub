@@ -84,7 +84,7 @@ fun CartItemCard(
                 verticalAlignment = Alignment.Top
             ) {
                 ProductImage(
-                    imageUrl = item.imageUrl,
+                    imageUrl = item.urlImage,
                     modifier = Modifier.size(80.dp)
                 )
 
@@ -94,7 +94,7 @@ fun CartItemCard(
                     modifier = Modifier.weight(ConstantsFloat.const_10)
                 ) {
                     Text(
-                        text = item.nome,
+                        text = item.name,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 18.sp,
                         maxLines = 2,
@@ -102,7 +102,7 @@ fun CartItemCard(
                     )
 
                     Text(
-                        text = item.categoria,
+                        text = item.category,
                         modifier = Modifier.padding(top = 4.dp)
                     )
 
@@ -114,7 +114,7 @@ fun CartItemCard(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         QuantitySelector(
-                            selectedQuantity = item.quantidade,
+                            selectedQuantity = item.quantity,
                             onQuantitySelected = onQuantityChange,
                             modifier = Modifier.wrapContentWidth()
                         )
@@ -144,12 +144,12 @@ fun CartItemCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "$ ${String.format("%.2f", item.precoUni)} UN",
+                    text = "$ ${String.format("%.2f", item.uniPrice)} UN",
                     fontSize = 16.sp,
                 )
 
                 Text(
-                    text = "$ ${String.format("%.2f", item.precoTotal)}",
+                    text = "$ ${String.format("%.2f", item.totalPrice)}",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Red
@@ -353,11 +353,11 @@ fun QuantitySelector(
 private fun CartItemCardPreview() {
     CartItemCard(
         item = CartItem(
-            nome = "produto de teste",
-            quantidade = 3,
-            precoUni = 10.0,
-            precoTotal = 30.0,
-            categoria = "categoria de teste",
-            imageUrl = ""
+            name = "produto de teste",
+            quantity = 3,
+            uniPrice = 10.0,
+            totalPrice = 30.0,
+            category = "categoria de teste",
+            urlImage = ""
         ), onQuantityChange = {}, onRemoveItem = {})
 }

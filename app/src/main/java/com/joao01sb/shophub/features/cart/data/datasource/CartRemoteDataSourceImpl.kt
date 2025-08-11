@@ -51,7 +51,7 @@ class CartRemoteDataSourceImpl(
                 .collection("users")
                 .document(userId)
                 .collection("cart")
-                .document(item.idProduto.toString())
+                .document(item.productId.toString())
                 .set(item)
                 .await()
             Unit
@@ -91,7 +91,7 @@ class CartRemoteDataSourceImpl(
         safeFirebaseCall {
             val orderId = UUID.randomUUID().toString()
 
-            val total = items.sumOf { it.precoUni * it.quantidade }
+            val total = items.sumOf { it.uniPrice * it.quantity }
 
             val order = Order(
                 id = orderId,

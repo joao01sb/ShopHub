@@ -37,7 +37,7 @@ fun OrderSummarySection(
     freight: Double = 0.0,
     modifier: Modifier = Modifier
 ) {
-    val subtotal = cartItems.sumOf { it.precoTotal }
+    val subtotal = cartItems.sumOf { it.totalPrice }
     val total = subtotal + freight
 
     Card(
@@ -76,13 +76,13 @@ fun OrderSummarySection(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "${item.quantidade}x ${item.nome}",
+                        text = "${item.quantity}x ${item.name}",
                         modifier = Modifier.weight(ConstantsFloat.const_10),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = "$ ${String.format("%.2f", item.precoTotal).replace('.', ',')}",
+                        text = "$ ${String.format("%.2f", item.totalPrice).replace('.', ',')}",
                         fontWeight = FontWeight.Medium
                     )
                 }
@@ -158,10 +158,10 @@ fun OrderSummarySection(
 private fun OrderSummarySectionPreview() {
     OrderSummarySection(
         cartItems = listOf<CartItem>(
-            CartItem(nome = "Item 1", precoTotal = 10.0),
-            CartItem(nome = "Item 2", precoTotal = 20.0),
-            CartItem(nome = "Item 3", precoTotal = 30.0),
-            CartItem(nome = "Item 4", precoTotal = 40.0),
+            CartItem(name = "Item 1", totalPrice = 10.0),
+            CartItem(name = "Item 2", totalPrice = 20.0),
+            CartItem(name = "Item 3", totalPrice = 30.0),
+            CartItem(name = "Item 4", totalPrice = 40.0),
         ),
         freight = 0.0,
         modifier = Modifier.padding(16.dp)

@@ -98,7 +98,7 @@ fun CartScreen(
                     }
                 }
                 BottomBarCart(
-                    subtotal = uiState.cart.sumOf { it.precoUni * it.quantidade },
+                    subtotal = uiState.cart.sumOf { it.uniPrice * it.quantity },
                     onFinalizarCompra = onCheckout
                 )
             }

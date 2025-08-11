@@ -13,7 +13,7 @@ class GetCartItemsUseCase(
         return cartRepository
             .observeCartItems(userId)
             .map { items ->
-                items.sortedBy { it.nome }
+                items.sortedBy { it.name }
             }
     }
 
