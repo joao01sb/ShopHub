@@ -15,8 +15,9 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.joao01sb.shophub.core.domain.model.Product
-import com.joao01sb.shophub.shared_ui.components.ProductCard
-import com.joao01sb.shophub.shared_ui.components.SearchHeader
+import com.joao01sb.shophub.core.utils.ConstantsFloat
+import com.joao01sb.shophub.sharedui.components.ProductCard
+import com.joao01sb.shophub.sharedui.components.SearchHeader
 
 @Composable
 fun HomeScreen(
@@ -34,7 +35,7 @@ fun HomeScreen(
             onSearchClick = onSearchClick
         )
         LazyVerticalGrid(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(ConstantsFloat.const_10),
             columns = GridCells.Fixed(2),
         ) {
             items(products.itemCount) {
@@ -52,7 +53,7 @@ fun HomeScreen(
                             .fillMaxSize()
                             .padding(16.dp),
                         contentAlignment = Alignment.Center
-                    ){
+                    ) {
                         CircularProgressIndicator()
                     }
                 }

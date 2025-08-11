@@ -10,7 +10,7 @@ class PlaceOrderUseCase(
 ) {
 
     suspend operator fun invoke(userId: String, items: List<CartItem>, info: CheckoutInfo) : DomainResult<Unit> {
-        return when(val result = cartRepository.placeOrder(userId, items, info)) {
+        return when (val result = cartRepository.placeOrder(userId, items, info)) {
             is DomainResult.Success -> DomainResult.Success(Unit)
             is DomainResult.Error -> result
         }

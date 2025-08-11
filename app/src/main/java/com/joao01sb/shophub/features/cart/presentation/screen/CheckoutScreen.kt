@@ -16,16 +16,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.joao01sb.shophub.core.utils.ConstantsFloat
 import com.joao01sb.shophub.features.cart.domain.model.CheckoutInfo
 import com.joao01sb.shophub.features.cart.presentation.components.CardPaymentSection
 import com.joao01sb.shophub.features.cart.presentation.components.ConfirmOrderButton
 import com.joao01sb.shophub.features.cart.presentation.components.OrderSummarySection
 import com.joao01sb.shophub.features.cart.presentation.components.PersonalDataSection
 import com.joao01sb.shophub.features.cart.presentation.state.CheckoutUiState
-import com.joao01sb.shophub.shared_ui.components.TopAppBarCustom
+import com.joao01sb.shophub.sharedui.components.TopAppBarCustom
+import com.joao01sb.shophub.sharedui.theme.LightGrayBackground
 
 @Composable
 fun CheckoutScreen(
@@ -56,9 +57,9 @@ fun CheckoutScreen(
             contentAlignment = Alignment.Center
         ) {
             LinearProgressIndicator(
-                modifier = Modifier.fillMaxWidth(0.5f),
+                modifier = Modifier.fillMaxWidth(ConstantsFloat.const_05),
                 color = MaterialTheme.colorScheme.primary,
-                trackColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+                trackColor = MaterialTheme.colorScheme.outline.copy(alpha = ConstantsFloat.const_03)
             )
         }
     } else if (uiState.itens.isEmpty()) {
@@ -81,8 +82,8 @@ fun CheckoutScreen(
 
             LazyColumn(
                 modifier = modifier
-                    .weight(1f)
-                    .background(Color(0xFFF5F5F5)),
+                    .weight(ConstantsFloat.const_10)
+                    .background(LightGrayBackground),
                 contentPadding = PaddingValues(8.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {

@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.joao01sb.shophub.core.utils.ConstantsFloat
 import com.joao01sb.shophub.features.auth.presentation.state.AuthUiState
 
 @Composable
@@ -77,7 +78,7 @@ fun RegisterScreen(
             }
             else -> {
 
-                Spacer(modifier = Modifier.weight(0.2f))
+                Spacer(modifier = Modifier.weight(ConstantsFloat.const_02))
 
                 Text(
                     modifier = Modifier
@@ -90,7 +91,7 @@ fun RegisterScreen(
                     color = MaterialTheme.colorScheme.onBackground
                 )
 
-                Spacer(modifier = Modifier.weight(0.1f))
+                Spacer(modifier = Modifier.weight(ConstantsFloat.const_01))
 
                 Column(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -181,7 +182,7 @@ fun RegisterScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.weight(0.7f))
+                Spacer(modifier = Modifier.weight(ConstantsFloat.const_07))
             }
         }
     }

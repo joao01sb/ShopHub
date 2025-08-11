@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.joao01sb.shophub.sharedui.theme.SuccessGreen
 
 @Composable
 fun BottomBarCart(
@@ -31,7 +32,7 @@ fun BottomBarCart(
     modifier: Modifier = Modifier
 ) {
     val total = subtotal + freight
-    
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -52,14 +53,16 @@ fun BottomBarCart(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Subtotal",)
+                    Text(text = "Subtotal")
                     Text(
-                        text = "$ ${String.format("%.2f", subtotal)
-                            .replace('.', ',')}",
+                        text = "$ ${
+                            String.format("%.2f", subtotal)
+                                .replace('.', ',')
+                        }",
                         fontWeight = FontWeight.Medium
                     )
                 }
-                
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -67,14 +70,16 @@ fun BottomBarCart(
                 ) {
                     Text(text = "Freight")
                     Text(
-                        text = if (freight == 0.0) "Free" else "$ ${String.format("%.2f", freight).replace('.', ',')}",
-                        color = if (freight == 0.0) Color(0xFF4CAF50) else MaterialTheme.colorScheme.onSurface,
+                        text = if (freight == 0.0) "Free" else "$ ${
+                            String.format("%.2f", freight).replace('.', ',')
+                        }",
+                        color = if (freight == 0.0) SuccessGreen else MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Medium
                     )
                 }
-                
-                HorizontalDivider(thickness = 1.dp,)
-                
+
+                HorizontalDivider(thickness = 1.dp)
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -90,9 +95,9 @@ fun BottomBarCart(
                     )
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(20.dp))
-            
+
             Button(
                 onClick = onFinalizarCompra,
                 modifier = Modifier

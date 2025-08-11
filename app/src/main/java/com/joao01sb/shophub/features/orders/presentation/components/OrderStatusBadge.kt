@@ -7,21 +7,28 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joao01sb.shophub.core.domain.enums.OrderStatus
+import com.joao01sb.shophub.sharedui.theme.CompletedBackgroundColor
+import com.joao01sb.shophub.sharedui.theme.PendingBackgroundColor
+import com.joao01sb.shophub.sharedui.theme.ProcessingBackgroundColor
+import com.joao01sb.shophub.sharedui.theme.CancelledBackgroundColor
+import com.joao01sb.shophub.sharedui.theme.CompletedTextColor
+import com.joao01sb.shophub.sharedui.theme.PendingTextColor
+import com.joao01sb.shophub.sharedui.theme.ProcessingTextColor
+import com.joao01sb.shophub.sharedui.theme.CancelledTextColor
 
 @Composable
 fun OrderStatusBadge(status: OrderStatus) {
     val (backgroundColor, textColor, text) = when (status) {
-        OrderStatus.COMPLETED -> Triple(Color(0xFFD4EDDA), Color(0xFF155724), "COMPLETED")
-        OrderStatus.PENDING -> Triple(Color(0xFFFFF3CD), Color(0xFF856404), "PENDING")
-        OrderStatus.PROCESSING -> Triple(Color(0xFFCCE7FF), Color(0xFF004085), "PROCESSING")
-        OrderStatus.CANCELLED -> Triple(Color(0xFFF8D7DA), Color(0xFF721C24), "CANCELLED")
+        OrderStatus.COMPLETED -> Triple(CompletedBackgroundColor, CompletedTextColor, "COMPLETED")
+        OrderStatus.PENDING -> Triple(PendingBackgroundColor, PendingTextColor, "PENDING")
+        OrderStatus.PROCESSING -> Triple(ProcessingBackgroundColor, ProcessingTextColor, "PROCESSING")
+        OrderStatus.CANCELLED -> Triple(CancelledBackgroundColor, CancelledTextColor, "CANCELLED")
     }
-    
+
     Box(
         modifier = Modifier
             .background(backgroundColor, RoundedCornerShape(20.dp))

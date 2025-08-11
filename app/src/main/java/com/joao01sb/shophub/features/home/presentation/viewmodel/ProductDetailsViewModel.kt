@@ -66,13 +66,15 @@ class ProductDetailsViewModel @Inject constructor(
 
     private fun addToCart() {
         viewModelScope.launch {
-            when(val result = cartManager.addItem(userId, _uiState.value.product!!.toCartItem(), 1)) {
+            when (val result =
+                cartManager.addItem(userId, _uiState.value.product!!.toCartItem(), 1)) {
                 is DomainResult.Error -> {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         error = result.message
                     )
                 }
+
                 is DomainResult.Success -> {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
@@ -90,14 +92,15 @@ class ProductDetailsViewModel @Inject constructor(
     private fun getProductById() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
-            
-            when(val result = getProductByIdUseCase(productId)) {
+
+            when (val result = getProductByIdUseCase(productId)) {
                 is DomainResult.Error -> {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         error = result.message
                     )
                 }
+
                 is DomainResult.Success -> {
                     _uiState.value = _uiState.value.copy(
                         product = result.data,

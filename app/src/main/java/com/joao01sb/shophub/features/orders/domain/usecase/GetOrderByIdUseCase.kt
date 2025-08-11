@@ -9,7 +9,7 @@ class GetOrderByIdUseCase(
 ) {
 
     suspend operator fun invoke(userId: String, orderId: String): DomainResult<Order?> {
-        return when(val result = ordersRepository.getOrderById(userId, orderId)){
+        return when (val result = ordersRepository.getOrderById(userId, orderId)) {
             is DomainResult.Success -> result
             is DomainResult.Error -> result
         }

@@ -42,70 +42,79 @@ class CartRemoteDataSourceImpl(
         awaitClose { listener.remove() }
     }
 
-    override suspend fun updateItem(userId: String, item: CartItem) : FirebaseResult<Unit> = safeFirebaseCall {
-        firestore
-            .collection("users")
-            .document(userId)
-            .collection("cart")
-            .document(item.idProduto.toString())
-            .set(item)
-            .await()
-        Unit
-    }
+    override suspend fun updateItem(
+        userId: String,
+        item: CartItem
+    ): FirebaseResult<Unit> =
+        safeFirebaseCall {
+            firestore
+                .collection("users")
+                .document(userId)
+                .collection("cart")
+                .document(item.idProduto.toString())
+                .set(item)
+                .await()
+            Unit
+        }
 
-    override suspend fun removeItem(userId: String, productId: String): FirebaseResult<Unit> = safeFirebaseCall {
-        firestore
-            .collection("users")
-            .document(userId)
-            .collection("cart")
-            .document(productId)
-            .delete()
-            .await()
-        Unit
-    }
+    override suspend fun removeItem(
+        userId: String,
+        productId: String
+    ): FirebaseResult<Unit> =
+        safeFirebaseCall {
+            firestore
+                .collection("users")
+                .document(userId)
+                .collection("cart")
+                .document(productId)
+                .delete()
+                .await()
+            Unit
+        }
 
-    override suspend fun clearCart(userId: String) : FirebaseResult<Unit> = safeFirebaseCall {
-        val cartRef = firestore
-            .collection("users")
-            .document(userId)
-            .collection("cart")
+    override suspend fun clearCart(userId: String): FirebaseResult<Unit> =
+        safeFirebaseCall {
+            val cartRef = firestore
+                .collection("users")
+                .document(userId)
+                .collection("cart")
 
-        val snapshot = cartRef.get().await()
-        snapshot.documents.forEach { it.reference.delete().await() }
-    }
+            val snapshot = cartRef.get().await()
+            snapshot.documents.forEach { it.reference.delete().await() }
+        }
 
     override suspend fun placeOrder(
         userId: String,
         items: List<CartItem>,
         info: CheckoutInfo
-    ) : FirebaseResult<Unit> = safeFirebaseCall {
-        val orderId = UUID.randomUUID().toString()
+    ): FirebaseResult<Unit> =
+        safeFirebaseCall {
+            val orderId = UUID.randomUUID().toString()
 
-        val total = items.sumOf { it.precoUni * it.quantidade }
+            val total = items.sumOf { it.precoUni * it.quantidade }
 
-        val order = Order(
-            id = orderId,
-            items = items,
-            total = total,
-            status = OrderStatus.COMPLETED,
-            createdAt = System.currentTimeMillis(),
-            paymentInfo = info
-        )
+            val order = Order(
+                id = orderId,
+                items = items,
+                total = total,
+                status = OrderStatus.COMPLETED,
+                createdAt = System.currentTimeMillis(),
+                paymentInfo = info
+            )
 
-        val userDoc = firestore.collection("users").document(userId)
+            val userDoc = firestore.collection("users").document(userId)
 
-        userDoc.collection("orders")
-            .document(orderId)
-            .set(order)
-            .await()
+            userDoc.collection("orders")
+                .document(orderId)
+                .set(order)
+                .await()
 
-        val cartRef = userDoc.collection("cart")
-        val cartItems = cartRef.get().await()
-        for (doc in cartItems.documents) {
-            doc.reference.delete().await()
+            val cartRef = userDoc.collection("cart")
+            val cartItems = cartRef.get().await()
+            for (doc in cartItems.documents) {
+                doc.reference.delete().await()
+            }
         }
-    }
-
 
     override fun getCurrentUserId(): String? {
         return firebaseAuth.currentUser?.uid

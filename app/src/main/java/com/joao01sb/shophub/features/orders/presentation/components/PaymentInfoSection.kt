@@ -8,10 +8,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.joao01sb.shophub.core.utils.maskCardNumber
 import com.joao01sb.shophub.features.cart.domain.model.CheckoutInfo
+import com.joao01sb.shophub.sharedui.theme.BackgroundLightGray
 
 @Composable
 fun PaymentInfoSection(paymentInfo: CheckoutInfo) {
@@ -22,7 +22,7 @@ fun PaymentInfoSection(paymentInfo: CheckoutInfo) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color(0xFFF8F9FA), RoundedCornerShape(8.dp))
+                .background(BackgroundLightGray, RoundedCornerShape(8.dp))
                 .padding(12.dp)
         ) {
             Column {

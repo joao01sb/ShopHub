@@ -15,7 +15,12 @@ interface ProductDao {
     @Query("SELECT * FROM products WHERE id = :id")
     suspend fun getProductById(id: Int): ProductEntity?
 
-    @Query("SELECT * FROM products WHERE name LIKE '%' || :query || '%' OR description LIKE '%' || :query || '%' OR category LIKE '%' || :query || '%'")
+    @Query(
+        "SELECT * FROM products " +
+                "WHERE name " +
+                "LIKE '%' || :query || '%' OR " +
+                "description LIKE '%' || :query || '%' OR " +
+                "category LIKE '%' || :query || '%'")
     fun searchProducts(query: String): PagingSource<Int, ProductEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

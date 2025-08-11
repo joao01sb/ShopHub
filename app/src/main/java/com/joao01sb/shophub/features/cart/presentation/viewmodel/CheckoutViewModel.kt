@@ -9,7 +9,7 @@ import com.joao01sb.shophub.features.cart.domain.model.CheckoutInfo
 import com.joao01sb.shophub.features.cart.domain.usecase.ValidateCheckoutInfoUseCase
 import com.joao01sb.shophub.features.cart.presentation.event.CheckoutEvent
 import com.joao01sb.shophub.features.cart.presentation.state.CheckoutUiEvent
-import com.joao01sb.shophub.features.cart.presentation.state.CheckoutUiEvent.*
+import com.joao01sb.shophub.features.cart.presentation.state.CheckoutUiEvent.Error
 import com.joao01sb.shophub.features.cart.presentation.state.CheckoutUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -32,7 +32,7 @@ class CheckoutViewModel @Inject constructor(
     private var userId: String? = null
 
     private val _checkoutState: MutableStateFlow<CheckoutUiState> = MutableStateFlow(CheckoutUiState())
-    val checkoutSate: StateFlow<CheckoutUiState>  = _checkoutState.asStateFlow()
+    val checkoutSate: StateFlow<CheckoutUiState> = _checkoutState.asStateFlow()
 
     private val _checkoutUiEvent: MutableSharedFlow<CheckoutUiEvent> = MutableSharedFlow(replay = 1)
     val checkoutUiEvent: SharedFlow<CheckoutUiEvent> = _checkoutUiEvent.asSharedFlow()
@@ -60,7 +60,7 @@ class CheckoutViewModel @Inject constructor(
     }
 
     fun onEvent(event: CheckoutEvent) {
-        when(event) {
+        when (event) {
             is CheckoutEvent.CardCVVChanged -> _checkoutState.update {
                 it.copy(cvv = event.cvv,)
             }
@@ -106,14 +106,14 @@ class CheckoutViewModel @Inject constructor(
 
     private suspend fun placerOrder() {
         try {
-            when(val result = cartManager.placeOrder(userId!!, _checkoutState.value.itens, CheckoutInfo(
+            when (val result = cartManager.placeOrder(userId!!, _checkoutState.value.itens, CheckoutInfo(
                 numberCard = _checkoutState.value.cardNumber,
                 nameCard = _checkoutState.value.cardHolderName,
                 dateCard = _checkoutState.value.expiryDate,
                 cvvCard = _checkoutState.value.cvv,
                 fullName = _checkoutState.value.fullName,
                 phoneNumber = _checkoutState.value.phone
-            ))){
+            ))) {
                 is DomainResult.Success -> {
                     _checkoutState.update {
                         it.copy(isLoading = false)

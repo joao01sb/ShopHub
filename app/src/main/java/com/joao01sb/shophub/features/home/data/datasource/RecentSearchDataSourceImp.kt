@@ -10,16 +10,19 @@ class RecentSearchDataSourceImp(
     private val recentSearchDao: RecentSearchDao
 ) : RecentSearchDataSource {
 
-    override suspend fun insert(recentSearch: RecentSearchEntity) = safeDatabaseCall {
-        recentSearchDao.insert(recentSearch)
-    }
+    override suspend fun insert(recentSearch: RecentSearchEntity) =
+        safeDatabaseCall {
+            recentSearchDao.insert(recentSearch)
+        }
 
-    override suspend fun clearRecentSearches(userId: String, query: String): DatabaseResult<Unit> = safeDatabaseCall {
-        recentSearchDao.clearRecentSearches(userId, query)
-    }
+    override suspend fun clearRecentSearches(userId: String, query: String): DatabaseResult<Unit> =
+        safeDatabaseCall {
+            recentSearchDao.clearRecentSearches(userId, query)
+        }
 
-    override suspend fun getRecentSearches(userId: String): DatabaseResult<List<RecentSearchEntity>> = safeDatabaseCall {
-        recentSearchDao.getRecentSearches(userId)
-    }
+    override suspend fun getRecentSearches(userId: String): DatabaseResult<List<RecentSearchEntity>> =
+        safeDatabaseCall {
+            recentSearchDao.getRecentSearches(userId)
+        }
 
 }

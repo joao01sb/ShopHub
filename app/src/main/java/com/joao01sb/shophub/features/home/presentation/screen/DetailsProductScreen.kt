@@ -1,6 +1,5 @@
 package com.joao01sb.shophub.features.home.presentation.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,8 +26,9 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.joao01sb.shophub.R
+import com.joao01sb.shophub.core.utils.ConstantsFloat
 import com.joao01sb.shophub.features.home.presentation.state.ProductDetailsUiState
-import com.joao01sb.shophub.shared_ui.components.TopAppBarCustom
+import com.joao01sb.shophub.sharedui.components.TopAppBarCustom
 
 @Preview
 @Composable
@@ -67,7 +67,7 @@ fun DetailsProductScreen(
             TopAppBarCustom("Details", onNavigationClick = onBack)
             Column {
 
-                Box(modifier = Modifier.weight(1f)) {
+                Box(modifier = Modifier.weight(ConstantsFloat.const_10)) {
                     AsyncImage(
                         modifier = Modifier
                             .fillMaxSize(),
@@ -84,7 +84,7 @@ fun DetailsProductScreen(
                 }
 
                 Column(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(ConstantsFloat.const_10)
                         .padding(8.dp),
                     horizontalAlignment = Alignment.Start,
                     verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -113,7 +113,6 @@ fun DetailsProductScreen(
                         color = MaterialTheme.colorScheme.onSurface
                     )
 
-
                     Text(
                         text = "Stock: " + uiState.product?.stock.toString() ?: "Unknow Stock",
                         style = MaterialTheme.typography.bodySmall,
@@ -129,7 +128,6 @@ fun DetailsProductScreen(
                         color = Color.Red
                     )
 
-
                 }
 
                 if (uiState.isShowButtonToCart) {
@@ -139,7 +137,7 @@ fun DetailsProductScreen(
                             .padding(8.dp),
                         onClick = onNavigateToCart
                     ) {
-                        Text("Go to Cart",fontSize = 16.sp,)
+                        Text("Go to Cart", fontSize = 16.sp,)
                     }
                 }
 
@@ -149,7 +147,7 @@ fun DetailsProductScreen(
                         .padding(8.dp),
                     onClick = onAddCart
                 ) {
-                    Text("Add to Cart",fontSize = 16.sp,)
+                    Text("Add to Cart", fontSize = 16.sp)
                 }
 
             }

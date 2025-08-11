@@ -8,7 +8,7 @@ class RemoveCartItemUseCase(
 ) {
 
     suspend operator fun invoke(userId: String, productId: String) : DomainResult<Unit> {
-        return when(val result = cartRepository.removeItem(userId, productId)) {
+        return when (val result = cartRepository.removeItem(userId, productId)) {
             is DomainResult.Success -> DomainResult.Success(Unit)
             is DomainResult.Error -> result
         }

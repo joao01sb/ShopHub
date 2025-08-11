@@ -1,4 +1,4 @@
-package com.joao01sb.shophub.shared_ui.theme
+package com.joao01sb.shophub.sharedui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

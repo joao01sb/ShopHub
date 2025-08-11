@@ -7,10 +7,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.joao01sb.shophub.sharedui.theme.TextDarkGray
+import com.joao01sb.shophub.sharedui.theme.TextGray
 
 @Composable
 fun PaymentInfoRow(
@@ -27,13 +28,13 @@ fun PaymentInfoRow(
         Text(
             text = label,
             fontSize = 14.sp,
-            color = Color(0xFF6C757D)
+            color = TextGray
         )
         Text(
             text = value,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFF333333)
+            color = TextDarkGray
         )
     }
 }

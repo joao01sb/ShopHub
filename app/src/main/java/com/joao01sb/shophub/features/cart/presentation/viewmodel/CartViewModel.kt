@@ -4,10 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joao01sb.shophub.core.domain.manager.AuthManager
 import com.joao01sb.shophub.core.domain.manager.CartManager
-import com.joao01sb.shophub.features.cart.domain.usecase.UpdateItemUseCase
-import com.joao01sb.shophub.features.cart.domain.usecase.ClearCartUseCase
-import com.joao01sb.shophub.features.cart.domain.usecase.GetCartItemsUseCase
-import com.joao01sb.shophub.features.cart.domain.usecase.RemoveCartItemUseCase
 import com.joao01sb.shophub.features.cart.presentation.event.CartEvent
 import com.joao01sb.shophub.features.cart.presentation.state.CartUiEvent
 import com.joao01sb.shophub.features.cart.presentation.state.CartUiState
@@ -35,7 +31,6 @@ class CartViewModel @Inject constructor(
 
     private val _cartItems = MutableStateFlow<CartUiState>(CartUiState.Loading)
     val cartItems: StateFlow<CartUiState> = _cartItems.asStateFlow()
-
 
     init {
         authManager.getCurrentUserId()

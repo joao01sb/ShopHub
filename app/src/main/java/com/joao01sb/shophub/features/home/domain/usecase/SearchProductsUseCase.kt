@@ -10,7 +10,7 @@ class SearchProductsUseCase(
 ) {
 
     suspend operator fun invoke(query: String, page: Int = 1): DomainResult<SearchResult> {
-        return when(val result = repository.searchProducts(query, page)) {
+        return when (val result = repository.searchProducts(query, page)) {
             is DomainResult.Success -> {
                 val searchResult = result.data.toSearchResult()
                 DomainResult.Success(searchResult)

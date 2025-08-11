@@ -100,9 +100,9 @@ class SearchViewModel @Inject constructor(
         searchJob?.cancel()
 
         val query = _uiState.value.searchQuery
-        if (query.length >= 2) {
+        if (query.length >= MIN_SEARCH_QUERY_LENGTH) {
             searchJob = viewModelScope.launch {
-                delay(500)
+                delay(SEARCH_DEBOUNCE_DELAY)
                 performSearch(resetResults = true)
             }
         }
@@ -112,7 +112,7 @@ class SearchViewModel @Inject constructor(
         val query = _uiState.value.searchQuery.trim()
 
         if (query.isBlank()) return
-        if (query.length < 2) return
+        if (query.length < MIN_SEARCH_QUERY_LENGTH) return
 
         viewModelScope.launch {
             try {
@@ -205,7 +205,7 @@ class SearchViewModel @Inject constructor(
     private fun saveRecentSearch(query: String) {
         viewModelScope.launch {
             userId?.let { userId ->
-                saveRecentSearchUseCase(userId,query)
+                saveRecentSearchUseCase(userId, query)
             } ?: run {
                 _uiState.value = _uiState.value.copy(error = "User not authenticated")
             }
@@ -216,7 +216,7 @@ class SearchViewModel @Inject constructor(
     fun clearRecentSearches(query: String) {
         viewModelScope.launch {
             userId?.let { userId ->
-                when(clearSearchUseCase(userId, query)) {
+                when (clearSearchUseCase(userId, query)) {
                     is DomainResult.Error -> Unit
                     is DomainResult.Success -> {
                         loadRecentSearches()
@@ -227,4 +227,10 @@ class SearchViewModel @Inject constructor(
             }
         }
     }
+
+    companion object {
+        const val MIN_SEARCH_QUERY_LENGTH = 2
+        const val SEARCH_DEBOUNCE_DELAY = 500L
+    }
+
 }

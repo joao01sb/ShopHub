@@ -1,4 +1,4 @@
-package com.joao01sb.shophub.shared_ui.components
+package com.joao01sb.shophub.sharedui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,6 +38,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.joao01sb.shophub.R
 import com.joao01sb.shophub.core.domain.model.Product
+import com.joao01sb.shophub.sharedui.theme.WarningOrange
 
 @Composable
 fun ProductCard(
@@ -50,7 +51,7 @@ fun ProductCard(
             .height(260.dp)
             .clickable { onClick(product.id) },
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape  = RectangleShape
+        shape = RectangleShape
     ) {
 
         Column {
@@ -92,7 +93,6 @@ fun ProductCard(
                 }
             }
 
-
             Column(
                 modifier = Modifier.padding(12.dp),
                 verticalArrangement = Arrangement.spacedBy(2.dp)
@@ -106,13 +106,11 @@ fun ProductCard(
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
-
                 Text(
                     text = product.category,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary
                 )
-
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -122,7 +120,7 @@ fun ProductCard(
                             imageVector = if (index < product.rating.toInt())
                                 Icons.Filled.Star else Icons.Outlined.Star,
                             contentDescription = null,
-                            tint = Color(0xFFFFB000),
+                            tint = WarningOrange,
                             modifier = Modifier.size(12.dp)
                         )
                     }
@@ -133,7 +131,6 @@ fun ProductCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-
 
                 Text(
                     text = "R$ ${String.format("%.2f", product.price)}",
@@ -149,12 +146,10 @@ fun ProductCard(
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
-
             }
         }
     }
 }
-
 
 @Preview
 @Composable
@@ -165,14 +160,12 @@ private fun ProductPreview() {
             "Coca cola",
             description = "Coca cola mock testes",
             6.0,
-            1.5,
+            1.toDouble(),
             5.0,
             100,
             "Drinks",
             "",
         ),
-        onClick = {
-
-        }
+        onClick = {}
     )
 }

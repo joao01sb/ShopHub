@@ -6,17 +6,17 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.joao01sb.shophub.core.data.local.ShopHubDatabase
-import com.joao01sb.shophub.core.data.local.entities.ProductEntity
 import com.joao01sb.shophub.core.data.mapper.toDomain
 import com.joao01sb.shophub.core.data.remote.ProductRemoteMediator
-import com.joao01sb.shophub.core.data.remote.dto.PaginatedResponse
+import com.joao01sb.shophub.core.data.remote.dto.PaginatedProductsResponse
 import com.joao01sb.shophub.core.data.remote.dto.ProductDto
 import com.joao01sb.shophub.core.domain.datasource.ProductLocalDataSource
 import com.joao01sb.shophub.core.domain.datasource.ProductRemoteDataSource
 import com.joao01sb.shophub.core.domain.model.Product
 import com.joao01sb.shophub.core.error.ErrorType
 import com.joao01sb.shophub.core.result.DomainResult
-import com.joao01sb.shophub.core.result.DomainResult.*
+import com.joao01sb.shophub.core.result.DomainResult.Error
+import com.joao01sb.shophub.core.result.DomainResult.Success
 import com.joao01sb.shophub.core.result.database.DatabaseResult
 import com.joao01sb.shophub.core.result.network.ApiResult
 import com.joao01sb.shophub.features.home.domain.repository.ProductRepository
@@ -49,59 +49,34 @@ class ProductRepositoryImpl(
     }
 
     override suspend fun getProductById(id: Int): DomainResult<Product> {
-        return when (val localResult = productLocalDataSource.getProductById(id)) {
-            is DatabaseResult.Success -> {
-                val localProduct = localResult.data
-                if (localProduct != null) {
-                    return Success(localProduct.toDomain())
-                } else {
-                    when (val remoteResult = productRemoteDataSource.getProductById(id)) {
-                        is ApiResult.HttpError ->
-                            DomainResult.Error(remoteResult.message, ErrorType.NETWORK)
+        val localResult = productLocalDataSource.getProductById(id)
 
-                        is ApiResult.NetworkError ->
-                            DomainResult.Error(
-                                remoteResult.exception.message ?: "Unknown error",
-                                ErrorType.NETWORK
-                            )
+        if (localResult is DatabaseResult.Success && localResult.data != null) {
+            return Success(localResult.data.toDomain())
+        }
 
-                        is ApiResult.Success -> {
-                            val remoteProduct = remoteResult.data
-                            return Success(remoteProduct.toDomain())
-                        }
+        return handleRemoteProductResult(productRemoteDataSource.getProductById(id))
+    }
 
-                        is ApiResult.UnknownError ->
-                            DomainResult.Error(
-                                remoteResult.exception.message ?: "Unknown error",
-                                ErrorType.NETWORK
-                            )
-                    }
-                }
-            }
+    private fun handleRemoteProductResult(remoteResult: ApiResult<ProductDto>): DomainResult<Product> {
+        return when (remoteResult) {
+            is ApiResult.HttpError ->
+                DomainResult.Error(remoteResult.message, ErrorType.NETWORK)
 
-            else -> {
-                when (val remoteResult = productRemoteDataSource.getProductById(id)) {
-                    is ApiResult.HttpError ->
-                        DomainResult.Error(remoteResult.message, ErrorType.NETWORK)
+            is ApiResult.NetworkError ->
+                DomainResult.Error(
+                    remoteResult.exception.message ?: "Unknown error",
+                    ErrorType.NETWORK
+                )
 
-                    is ApiResult.NetworkError ->
-                        DomainResult.Error(
-                            remoteResult.exception.message ?: "Unknown error",
-                            ErrorType.NETWORK
-                        )
+            is ApiResult.Success ->
+                Success(remoteResult.data.toDomain())
 
-                    is ApiResult.Success -> {
-                        val remoteProduct = remoteResult.data
-                        return Success(remoteProduct.toDomain())
-                    }
-
-                    is ApiResult.UnknownError ->
-                        DomainResult.Error(
-                            remoteResult.exception.message ?: "Unknown error",
-                            ErrorType.NETWORK
-                        )
-                }
-            }
+            is ApiResult.UnknownError ->
+                DomainResult.Error(
+                    remoteResult.exception.message ?: "Unknown error",
+                    ErrorType.NETWORK
+                )
         }
     }
 
@@ -109,7 +84,7 @@ class ProductRepositoryImpl(
         query: String,
         page: Int,
         limit: Int
-    ): DomainResult<PaginatedResponse<ProductDto>> {
+    ): DomainResult<PaginatedProductsResponse<ProductDto>> {
         val skip = (page - 1) * limit
         return when (val remoteResult =
             productRemoteDataSource.searchProducts(query, skip, limit)) {

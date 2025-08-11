@@ -62,9 +62,9 @@ fun PersonalDataSection(
                     fontWeight = FontWeight.Bold
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(20.dp))
-            
+
             OutlinedTextField(
                 value = checkoutInfo.fullName,
                 onValueChange = onFullNameChanged,
@@ -79,9 +79,9 @@ fun PersonalDataSection(
                 ),
                 singleLine = true
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             OutlinedTextField(
                 value = checkoutInfo.phoneNumber,
                 onValueChange = { newValue ->

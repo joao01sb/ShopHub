@@ -15,7 +15,7 @@ class RemoteOrdersDataSourceImp(
 
     override suspend fun getOrders(
         userId: String
-    ): FirebaseResult<List<Order>> = safeFirebaseCall{
+    ): FirebaseResult<List<Order>> = safeFirebaseCall {
         val snapshot = firestore
             .collection("users")
             .document(userId)

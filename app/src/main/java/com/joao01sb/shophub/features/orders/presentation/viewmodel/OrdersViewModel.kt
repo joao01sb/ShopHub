@@ -21,7 +21,7 @@ import javax.inject.Inject
 class OrdersViewModel @Inject constructor(
     private val getOrdersUseCase: GetOrdersUseCase,
     private val authManager: AuthManager
-) : ViewModel(){
+) : ViewModel() {
 
     private var userId: String? = null
 
@@ -46,7 +46,7 @@ class OrdersViewModel @Inject constructor(
 
     suspend fun getOrders() {
         userId?.let { id ->
-            when(val result = getOrdersUseCase(id)) {
+            when (val result = getOrdersUseCase(id)) {
                 is DomainResult.Success -> {
                     _ordersUiState.value = OrdersUiState.Success(result.data)
                 }
@@ -70,7 +70,7 @@ class OrdersViewModel @Inject constructor(
             is OrdersEvent.Logout -> {
                 viewModelScope.launch {
 
-                    when(val result = authManager.logoutUser()) {
+                    when (val result = authManager.logoutUser()) {
                         is DomainResult.Success -> {
                             _orderUiEvent.tryEmit(OrderUiEvent.Logout)
                         }

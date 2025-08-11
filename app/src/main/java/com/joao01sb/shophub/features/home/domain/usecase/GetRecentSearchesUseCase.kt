@@ -9,7 +9,7 @@ class GetRecentSearchesUseCase(
 ) {
 
     suspend operator fun invoke(userId: String) : DomainResult<List<RecentSearchEntity>> {
-        return when(val result = repository.getRecentSearches(userId)) {
+        return when (val result = repository.getRecentSearches(userId)) {
             is DomainResult.Success -> DomainResult.Success(result.data)
             is DomainResult.Error -> result
         }

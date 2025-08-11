@@ -13,5 +13,4 @@ class ValidateCheckoutInfoUseCase {
                 checkoutInfo.phoneNumber.length >= 10
     }
 
-
 }

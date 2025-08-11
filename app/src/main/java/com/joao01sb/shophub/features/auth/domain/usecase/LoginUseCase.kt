@@ -8,7 +8,7 @@ class LoginUseCase(
 ) {
 
     suspend operator fun invoke(email: String, password: String): DomainResult<Unit> {
-        return when(val result = repository.login(email, password)) {
+        return when (val result = repository.login(email, password)) {
             is DomainResult.Success -> DomainResult.Success(Unit)
             is DomainResult.Error -> result
         }

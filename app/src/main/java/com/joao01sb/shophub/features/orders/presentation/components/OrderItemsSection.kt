@@ -6,17 +6,18 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joao01sb.shophub.core.domain.model.Order
+import com.joao01sb.shophub.sharedui.theme.BorderLightGray
+import com.joao01sb.shophub.sharedui.theme.PrimaryBlue
+import com.joao01sb.shophub.sharedui.theme.TextDarkGray
 
 @Composable
 fun OrderItemsSection(order: Order) {
@@ -29,17 +30,17 @@ fun OrderItemsSection(order: Order) {
             if (index < order.items.size - 1) {
                 HorizontalDivider(
                     modifier = Modifier.padding(vertical = 12.dp),
-                    color = Color(0xFFE9ECEF)
+                    color = BorderLightGray
                 )
             }
         }
-        
+
         Spacer(modifier = Modifier.height(12.dp))
-        
-        HorizontalDivider(color = Color(0xFFE9ECEF))
-        
+
+        HorizontalDivider(color = BorderLightGray)
+
         Spacer(modifier = Modifier.height(12.dp))
-        
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -49,13 +50,13 @@ fun OrderItemsSection(order: Order) {
                 text = "Total",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF333333)
+                color = TextDarkGray
             )
             Text(
                 text = "$ %.2f".format(order.total),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF4285F4)
+                color = PrimaryBlue
             )
         }
     }

@@ -31,6 +31,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.joao01sb.shophub.core.utils.ConstantsFloat
 import com.joao01sb.shophub.features.cart.domain.model.CheckoutInfo
 import com.joao01sb.shophub.features.cart.presentation.utils.CardNumberVisualTransformation
 import com.joao01sb.shophub.features.cart.presentation.utils.ExpiryDateVisualTransformation
@@ -68,9 +69,9 @@ fun CardPaymentSection(
                     fontWeight = FontWeight.Bold,
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(20.dp))
-            
+
             OutlinedTextField(
                 value = checkoutInfo.numberCard,
                 onValueChange = { newValue: String ->
@@ -94,9 +95,9 @@ fun CardPaymentSection(
                 },
                 singleLine = true
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             OutlinedTextField(
                 value = checkoutInfo.nameCard,
                 onValueChange = onCardHolderNameChanged,
@@ -111,9 +112,9 @@ fun CardPaymentSection(
                 ),
                 singleLine = true
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -126,7 +127,7 @@ fun CardPaymentSection(
                     },
                     label = { Text("Validity") },
                     placeholder = { Text("MM/AA") },
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(ConstantsFloat.const_10),
                     shape = RoundedCornerShape(12.dp),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
@@ -141,7 +142,7 @@ fun CardPaymentSection(
                     },
                     singleLine = true
                 )
-                
+
                 OutlinedTextField(
                     value = checkoutInfo.cvvCard,
                     onValueChange = { newValue: String ->
@@ -151,7 +152,7 @@ fun CardPaymentSection(
                     },
                     label = { Text("CVV") },
                     placeholder = { Text("123") },
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(ConstantsFloat.const_10),
                     shape = RoundedCornerShape(12.dp),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,

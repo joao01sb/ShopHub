@@ -6,9 +6,6 @@ import com.joao01sb.shophub.core.domain.manager.AuthManager
 import com.joao01sb.shophub.core.result.DomainResult
 import com.joao01sb.shophub.features.auth.presentation.event.AuthEvent
 import com.joao01sb.shophub.features.auth.presentation.event.AuthUiEvent
-import com.joao01sb.shophub.features.auth.domain.usecase.IsUserLoggedInUseCase
-import com.joao01sb.shophub.features.auth.domain.usecase.LoginUseCase
-import com.joao01sb.shophub.features.auth.domain.usecase.RegisterUseCase
 import com.joao01sb.shophub.features.auth.presentation.state.AuthUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow

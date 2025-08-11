@@ -22,9 +22,9 @@ import androidx.compose.ui.unit.dp
 import com.joao01sb.shophub.core.domain.model.Product
 import com.joao01sb.shophub.features.home.domain.state.SearchState
 import com.joao01sb.shophub.features.home.presentation.state.SearchUiState
-import com.joao01sb.shophub.shared_ui.components.ProductCard
-import com.joao01sb.shophub.shared_ui.components.RecentSearchesContent
-import com.joao01sb.shophub.shared_ui.components.SearchProductBar
+import com.joao01sb.shophub.sharedui.components.ProductCard
+import com.joao01sb.shophub.sharedui.components.RecentSearchesContent
+import com.joao01sb.shophub.sharedui.components.SearchProductBar
 
 @Composable
 fun SearchProductScreen(

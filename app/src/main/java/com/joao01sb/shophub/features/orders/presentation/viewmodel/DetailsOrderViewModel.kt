@@ -52,10 +52,9 @@ class DetailsOrderViewModel @Inject constructor(
     private val _orderDetailsUiState = MutableStateFlow<OrderDetailsUiState>(OrderDetailsUiState.Loading)
     val orderDetailsUiState = _orderDetailsUiState.asStateFlow()
 
-
     suspend fun getOrderDetails() {
         userId?.let { id ->
-            when(val result = getOrderByIdUseCase(id, orderId)) {
+            when (val result = getOrderByIdUseCase(id, orderId)) {
                 is DomainResult.Error -> {
                     _orderDetailsUiState.value = OrderDetailsUiState.Error(result.message ?: "Unknown error")
                 }

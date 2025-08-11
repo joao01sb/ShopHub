@@ -14,10 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.joao01sb.shophub.core.domain.model.CartItem
+import com.joao01sb.shophub.core.utils.ConstantsFloat
 import com.joao01sb.shophub.features.cart.presentation.components.BottomBarCart
 import com.joao01sb.shophub.features.cart.presentation.components.CartItemCard
 import com.joao01sb.shophub.features.cart.presentation.state.CartUiState
-import com.joao01sb.shophub.shared_ui.components.TopAppBarCustom
+import com.joao01sb.shophub.sharedui.components.TopAppBarCustom
 
 @Composable
 fun CartScreen(
@@ -79,7 +80,7 @@ fun CartScreen(
                     }
                 } else {
                     LazyColumn(
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(ConstantsFloat.const_10),
                         contentPadding = PaddingValues(vertical = 8.dp)
                     ) {
                         items(uiState.cart.size) { index ->
@@ -87,7 +88,7 @@ fun CartScreen(
                             CartItemCard(
                                 item = item,
                                 onQuantityChange = { newQuantity ->
-                                    onQuantityChange(item,newQuantity)
+                                    onQuantityChange(item, newQuantity)
                                 },
                                 onRemoveItem = {
                                     onRemoveItem(item)

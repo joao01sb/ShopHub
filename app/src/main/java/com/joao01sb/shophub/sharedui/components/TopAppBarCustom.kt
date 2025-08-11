@@ -1,6 +1,5 @@
-package com.joao01sb.shophub.shared_ui.components
+package com.joao01sb.shophub.sharedui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.joao01sb.shophub.core.utils.ConstantsFloat
 
 @Preview
 @Composable
@@ -62,7 +62,7 @@ fun TopAppBarCustom(
             Spacer(modifier = Modifier.width(16.dp))
 
             Text(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(ConstantsFloat.const_10),
                 text = title,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,

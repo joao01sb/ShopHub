@@ -23,6 +23,9 @@ import androidx.compose.ui.unit.sp
 import com.joao01sb.shophub.core.data.mock.MockOrders
 import com.joao01sb.shophub.core.domain.model.Order
 import com.joao01sb.shophub.core.utils.formatDate
+import com.joao01sb.shophub.sharedui.theme.PrimaryBlue
+import com.joao01sb.shophub.sharedui.theme.TextDarkGray
+import com.joao01sb.shophub.sharedui.theme.TextGray
 import java.util.UUID
 
 @Composable
@@ -50,39 +53,39 @@ fun OrderCard(
                     text = order.orderNumber,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF333333)
+                    color = TextDarkGray
                 )
-                
+
                 OrderStatusBadge(status = order.status)
             }
-            
+
             Spacer(modifier = Modifier.height(12.dp))
-            
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically // Corrigido alinhamento vertical
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = formatDate(order.createdAt),
                     fontSize = 14.sp,
-                    color = Color(0xFF6C757D)
+                    color = TextGray
                 )
-                
+
                 Text(
                     text = "$ %.2f".format(order.total),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF4285F4)
+                    color = PrimaryBlue
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             Text(
                 text = "${order.items.size} ${if (order.items.size == 1) "item" else "itens"}",
                 fontSize = 14.sp,
-                color = Color(0xFF6C757D)
+                color = TextGray
             )
         }
     }

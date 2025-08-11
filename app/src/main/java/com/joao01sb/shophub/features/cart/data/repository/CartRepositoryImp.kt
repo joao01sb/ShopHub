@@ -3,9 +3,7 @@ package com.joao01sb.shophub.features.cart.data.repository
 import com.joao01sb.shophub.core.domain.model.CartItem
 import com.joao01sb.shophub.core.error.ErrorType
 import com.joao01sb.shophub.core.result.DomainResult
-import com.joao01sb.shophub.core.result.DomainResult.*
 import com.joao01sb.shophub.core.result.firebase.FirebaseResult
-import com.joao01sb.shophub.core.result.firebase.safeFirebaseCall
 import com.joao01sb.shophub.features.cart.domain.datasource.CartRemoteDataSource
 import com.joao01sb.shophub.features.cart.domain.model.CheckoutInfo
 import com.joao01sb.shophub.features.cart.domain.repository.CartRepository
@@ -23,7 +21,7 @@ class CartRepositoryImp(
         userId: String,
         item: CartItem
     ) : DomainResult<Unit> {
-        return when(val result = remoteDataSource.updateItem(userId, item)) {
+        return when (val result = remoteDataSource.updateItem(userId, item)) {
             is FirebaseResult.AuthError -> DomainResult.Error(
                 message = result.message,
                 type = ErrorType.AUTHENTICATION
@@ -41,8 +39,11 @@ class CartRepositoryImp(
         }
     }
 
-    override suspend fun removeItem(userId: String, productId: String) : DomainResult<Unit> {
-        return when(val result = remoteDataSource.removeItem(userId, productId)) {
+    override suspend fun removeItem(
+        userId: String,
+        productId: String
+    ) : DomainResult<Unit> {
+        return when (val result = remoteDataSource.removeItem(userId, productId)) {
             is FirebaseResult.AuthError -> DomainResult.Error(
                 message = result.message,
                 type = ErrorType.AUTHENTICATION
@@ -62,19 +63,19 @@ class CartRepositoryImp(
     }
 
     override suspend fun clearCart(userId: String) : DomainResult<Unit> {
-        when(val result = remoteDataSource.clearCart(userId)) {
-            is FirebaseResult.AuthError -> return DomainResult.Error(
+        return when (val result = remoteDataSource.clearCart(userId)) {
+            is FirebaseResult.AuthError -> DomainResult.Error(
                 message = result.message,
                 type = ErrorType.AUTHENTICATION
             )
 
-            is FirebaseResult.FirebaseError -> return DomainResult.Error(
+            is FirebaseResult.FirebaseError -> DomainResult.Error(
                 message = result.message,
                 type = ErrorType.DATABASE
             )
 
-            is FirebaseResult.Success -> return DomainResult.Success(Unit)
-            is FirebaseResult.UnknownError -> return DomainResult.Error(
+            is FirebaseResult.Success -> DomainResult.Success(Unit)
+            is FirebaseResult.UnknownError -> DomainResult.Error(
                 message = "Clear cart failed: ${result.exception.message}",
                 type = ErrorType.UNKNOWN
             )
@@ -85,20 +86,20 @@ class CartRepositoryImp(
         userId: String,
         items: List<CartItem>,
         info: CheckoutInfo
-    ) : DomainResult<Unit>{
-        when(val result = remoteDataSource.placeOrder(userId, items, info)) {
-            is FirebaseResult.AuthError -> return DomainResult.Error(
+    ) : DomainResult<Unit> {
+        return when (val result = remoteDataSource.placeOrder(userId, items, info)) {
+            is FirebaseResult.AuthError -> DomainResult.Error(
                 message = result.message,
                 type = ErrorType.AUTHENTICATION
             )
 
-            is FirebaseResult.FirebaseError -> return DomainResult.Error(
+            is FirebaseResult.FirebaseError -> DomainResult.Error(
                 message = result.message,
                 type = ErrorType.DATABASE
             )
 
-            is FirebaseResult.Success -> return DomainResult.Success(Unit)
-            is FirebaseResult.UnknownError -> return DomainResult.Error(
+            is FirebaseResult.Success -> DomainResult.Success(Unit)
+            is FirebaseResult.UnknownError -> DomainResult.Error(
                 message = "Order placement failed: ${result.exception.message}",
                 type = ErrorType.UNKNOWN
             )

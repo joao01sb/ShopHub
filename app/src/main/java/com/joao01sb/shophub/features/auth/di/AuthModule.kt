@@ -1,10 +1,7 @@
 package com.joao01sb.shophub.features.auth.di
 
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.joao01sb.shophub.features.auth.data.datasource.AuthRemoteDataSourceImp
 import com.joao01sb.shophub.features.auth.data.repository.AuthRepositoryImp
 import com.joao01sb.shophub.features.auth.domain.datasource.AuthRemoteDataSource
@@ -18,7 +15,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import jakarta.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)

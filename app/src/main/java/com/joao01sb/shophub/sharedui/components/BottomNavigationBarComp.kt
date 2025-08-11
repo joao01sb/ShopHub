@@ -1,4 +1,4 @@
-package com.joao01sb.shophub.shared_ui.components
+package com.joao01sb.shophub.sharedui.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home

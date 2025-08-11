@@ -38,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joao01sb.shophub.R
+import com.joao01sb.shophub.core.utils.ConstantsFloat
 import com.joao01sb.shophub.features.auth.presentation.state.AuthUiState
 
 @Composable
@@ -64,7 +65,7 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Spacer(modifier = Modifier.weight(0.1f))
+        Spacer(modifier = Modifier.weight(ConstantsFloat.const_01))
 
         Image(
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
@@ -79,7 +80,7 @@ fun LoginScreen(
             color = Color.Black
         )
 
-        Spacer(modifier = Modifier.weight(0.2f))
+        Spacer(modifier = Modifier.weight(ConstantsFloat.const_02))
 
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -160,7 +161,7 @@ fun LoginScreen(
             }
         }
 
-        Spacer(modifier = Modifier.weight(0.7f))
+        Spacer(modifier = Modifier.weight(ConstantsFloat.const_07))
     }
 }
 

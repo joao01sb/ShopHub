@@ -32,7 +32,8 @@ import com.joao01sb.shophub.core.domain.model.Order
 import com.joao01sb.shophub.features.orders.presentation.components.OrderCard
 import com.joao01sb.shophub.features.orders.presentation.components.OrderFilterTabs
 import com.joao01sb.shophub.features.orders.presentation.state.OrdersUiState
-import com.joao01sb.shophub.shared_ui.components.TopAppBarCustom
+import com.joao01sb.shophub.sharedui.components.TopAppBarCustom
+import com.joao01sb.shophub.sharedui.theme.BackgroundLightGray
 
 @Composable
 fun OrdersScreen(
@@ -47,7 +48,7 @@ fun OrdersScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8F9FA))
+            .background(BackgroundLightGray)
     ) {
         TopAppBarCustom(
             title = "My Orders",
@@ -70,7 +71,7 @@ fun OrdersScreen(
                             color = Color.Red
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        Button(onClick = onRetry ) {
+                        Button(onClick = onRetry) {
                             Text(text = "Retry")
                         }
                     }
@@ -102,7 +103,7 @@ fun OrdersScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(Color(0xFFF8F9FA))
+                            .background(BackgroundLightGray)
                     ) {
                         TopAppBarCustom(
                             title = "My Orders",
@@ -122,11 +123,16 @@ fun OrdersScreen(
                             Spacer(modifier = Modifier.height(20.dp))
 
                             val filteredOrders = when (selectedFilter) {
-                                OrderFilter.ALL -> orderUiState.orders
-                                OrderFilter.COMPLETED -> orderUiState.orders.filter { it.status == OrderStatus.COMPLETED }
-                                OrderFilter.PENDING -> orderUiState.orders.filter {
-                                    it.status == OrderStatus.PENDING || it.status == OrderStatus.PROCESSING
-                                }
+                                OrderFilter.ALL ->
+                                    orderUiState.orders
+
+                                OrderFilter.COMPLETED ->
+                                    orderUiState.orders.filter { it.status == OrderStatus.COMPLETED }
+
+                                OrderFilter.PENDING ->
+                                    orderUiState.orders.filter {
+                                        it.status == OrderStatus.PENDING || it.status == OrderStatus.PROCESSING
+                                    }
                             }
 
                             if (filteredOrders.isEmpty()) {
@@ -211,7 +217,7 @@ private fun OrdersScreenPreview() {
         orderUiState = OrdersUiState.Success(
             orders = MockOrders.orders
         ),
-        onOrderClick = {  },
-        onBackClick = {  }
+        onOrderClick = { },
+        onBackClick = { }
     )
 }

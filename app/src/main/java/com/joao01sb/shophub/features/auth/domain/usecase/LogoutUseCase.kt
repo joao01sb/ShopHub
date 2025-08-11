@@ -8,7 +8,7 @@ class LogoutUseCase(
 ) {
 
     suspend operator fun invoke() : DomainResult<Unit> {
-        return when(val result = repository.logout()) {
+        return when (val result = repository.logout()) {
             is DomainResult.Success -> result
             is DomainResult.Error -> result
         }

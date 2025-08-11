@@ -8,7 +8,7 @@ class IsUserLoggedInUseCase(
 
     operator fun invoke() : Result<Boolean> {
         return try {
-            if(repository.isUserLoggedIn()) {
+            if (repository.isUserLoggedIn()) {
                 Result.success(true)
             } else {
                 Result.success(false)

@@ -14,12 +14,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joao01sb.shophub.core.domain.model.CartItem
+import com.joao01sb.shophub.core.utils.ConstantsFloat
 import com.joao01sb.shophub.core.utils.getCategoryIcon
+import com.joao01sb.shophub.sharedui.theme.BlueGradientLight
+import com.joao01sb.shophub.sharedui.theme.PrimaryBlue
+import com.joao01sb.shophub.sharedui.theme.TextDarkGray
+import com.joao01sb.shophub.sharedui.theme.TextGray
 
 @Composable
 fun ProductItem(item: CartItem) {
@@ -30,7 +34,7 @@ fun ProductItem(item: CartItem) {
         Box(
             modifier = Modifier
                 .size(50.dp)
-                .background(Color(0xFFE3F2FD), RoundedCornerShape(8.dp)),
+                .background(BlueGradientLight, RoundedCornerShape(8.dp)),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -38,41 +42,41 @@ fun ProductItem(item: CartItem) {
                 fontSize = 20.sp
             )
         }
-        
+
         Spacer(modifier = Modifier.width(12.dp))
-        
-        Column(modifier = Modifier.weight(1f)) {
+
+        Column(modifier = Modifier.weight(ConstantsFloat.const_10)) {
             Text(
                 text = item.nome,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF333333)
+                color = TextDarkGray
             )
-            
+
             Text(
                 text = item.categoria,
                 fontSize = 12.sp,
-                color = Color(0xFF6C757D)
+                color = TextGray
             )
-            
+
             Spacer(modifier = Modifier.height(4.dp))
-            
+
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "Qtd: ${item.quantidade}",
                     fontSize = 14.sp,
-                    color = Color(0xFF6C757D)
+                    color = TextGray
                 )
-                
+
                 Spacer(modifier = Modifier.width(8.dp))
-                
+
                 Text(
                     text = "$ %.2f".format(item.precoUni * item.quantidade),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF4285F4)
+                    color = PrimaryBlue
                 )
             }
         }

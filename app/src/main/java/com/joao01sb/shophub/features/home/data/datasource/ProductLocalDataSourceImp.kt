@@ -14,33 +14,39 @@ class ProductLocalDataSourceImp(
     private val remoteKeysDao: RemoteKeysDao
 ) : ProductLocalDataSource {
 
-    override fun getAllProducts(): PagingSource<Int, ProductEntity> = productDao.getAllProducts()
+    override fun getAllProducts(): PagingSource<Int, ProductEntity> =
+        productDao.getAllProducts()
 
+    override fun searchProducts(query: String): PagingSource<Int, ProductEntity> =
+        productDao.searchProducts(query)
 
-    override fun searchProducts(query: String): PagingSource<Int, ProductEntity> = productDao.searchProducts(query)
+    override suspend fun insertProducts(products: List<ProductEntity>): DatabaseResult<Unit> =
+        safeDatabaseCall {
+            productDao.insertProducts(products)
+        }
 
+    override suspend fun getProductById(id: Int): DatabaseResult<ProductEntity?> =
+        safeDatabaseCall {
+            productDao.getProductById(id)
+        }
 
-    override suspend fun insertProducts(products: List<ProductEntity>) : DatabaseResult<Unit> = safeDatabaseCall {
-        productDao.insertProducts(products)
-    }
+    override suspend fun clearProducts(): DatabaseResult<Unit> =
+        safeDatabaseCall {
+            productDao.clearProducts()
+        }
 
-    override suspend fun getProductById(id: Int): DatabaseResult<ProductEntity?> = safeDatabaseCall {
-        productDao.getProductById(id)
-    }
+    override suspend fun getRemoteKeyByProductId(productId: Int): DatabaseResult<RemoteKeysEntity?> =
+        safeDatabaseCall {
+            remoteKeysDao.getRemoteKeyByProductId(productId)
+        }
 
-    override suspend fun clearProducts() : DatabaseResult<Unit> =safeDatabaseCall {
-        productDao.clearProducts()
-    }
+    override suspend fun insertRemoteKeys(remoteKeys: List<RemoteKeysEntity>): DatabaseResult<Unit> =
+        safeDatabaseCall {
+            remoteKeysDao.insertRemoteKeys(remoteKeys)
+        }
 
-    override suspend fun getRemoteKeyByProductId(productId: Int): DatabaseResult<RemoteKeysEntity?> = safeDatabaseCall {
-        remoteKeysDao.getRemoteKeyByProductId(productId)
-    }
-
-    override suspend fun insertRemoteKeys(remoteKeys: List<RemoteKeysEntity>) : DatabaseResult<Unit> = safeDatabaseCall {
-        remoteKeysDao.insertRemoteKeys(remoteKeys)
-    }
-
-    override suspend fun clearRemoteKeys() : DatabaseResult<Unit> = safeDatabaseCall {
-        remoteKeysDao.clearRemoteKeys()
-    }
+    override suspend fun clearRemoteKeys(): DatabaseResult<Unit> =
+        safeDatabaseCall {
+            remoteKeysDao.clearRemoteKeys()
+        }
 }

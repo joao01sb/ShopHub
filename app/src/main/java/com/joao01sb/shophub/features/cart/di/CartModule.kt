@@ -1,26 +1,21 @@
 package com.joao01sb.shophub.features.cart.di
 
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.joao01sb.shophub.features.cart.data.datasource.CartRemoteDataSourceImpl
 import com.joao01sb.shophub.features.cart.data.repository.CartRepositoryImp
 import com.joao01sb.shophub.features.cart.domain.datasource.CartRemoteDataSource
-import com.joao01sb.shophub.features.cart.domain.model.CheckoutInfo
 import com.joao01sb.shophub.features.cart.domain.repository.CartRepository
-import com.joao01sb.shophub.features.cart.domain.usecase.UpdateItemUseCase
 import com.joao01sb.shophub.features.cart.domain.usecase.ClearCartUseCase
 import com.joao01sb.shophub.features.cart.domain.usecase.GetCartItemsUseCase
 import com.joao01sb.shophub.features.cart.domain.usecase.PlaceOrderUseCase
 import com.joao01sb.shophub.features.cart.domain.usecase.RemoveCartItemUseCase
+import com.joao01sb.shophub.features.cart.domain.usecase.UpdateItemUseCase
 import com.joao01sb.shophub.features.cart.domain.usecase.ValidateCheckoutInfoUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-
 
 @Module
 @InstallIn(SingletonComponent::class)

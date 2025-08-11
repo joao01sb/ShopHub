@@ -22,13 +22,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joao01sb.shophub.core.domain.model.CartItem
+import com.joao01sb.shophub.core.utils.ConstantsFloat
+import com.joao01sb.shophub.sharedui.theme.SuccessGreen
 
 @Composable
 fun OrderSummarySection(
@@ -38,7 +39,7 @@ fun OrderSummarySection(
 ) {
     val subtotal = cartItems.sumOf { it.precoTotal }
     val total = subtotal + freight
-    
+
     Card(
         modifier = modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
@@ -63,9 +64,9 @@ fun OrderSummarySection(
                     fontWeight = FontWeight.Bold,
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(20.dp))
-            
+
             cartItems.take(3).forEach { item ->
                 Row(
                     modifier = Modifier
@@ -76,7 +77,7 @@ fun OrderSummarySection(
                 ) {
                     Text(
                         text = "${item.quantidade}x ${item.nome}",
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(ConstantsFloat.const_10),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -86,16 +87,16 @@ fun OrderSummarySection(
                     )
                 }
             }
-            
+
             if (cartItems.size > 3) {
                 Text(
                     text = "... and more ${cartItems.size - 3} itens",
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -110,7 +111,7 @@ fun OrderSummarySection(
                         text = "$ ${String.format("%.2f", subtotal).replace('.', ',')}",
                     )
                 }
-                
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -119,17 +120,19 @@ fun OrderSummarySection(
                         text = "Freight",
                     )
                     Text(
-                        text = if (freight == 0.0) "Free" else "$ ${String.format("%.2f", freight).replace('.', ',')}",
-                        color = if (freight == 0.0) Color(0xFF4CAF50) else MaterialTheme.colorScheme.onSurface,
+                        text = if (freight == 0.0) "Free" else "$ ${
+                            String.format("%.2f", freight).replace('.', ',')
+                        }",
+                        color = if (freight == 0.0) SuccessGreen else MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Medium
                     )
                 }
-                
+
                 HorizontalDivider(
                     thickness = 1.dp,
                     color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
                 )
-                
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -156,12 +159,11 @@ private fun OrderSummarySectionPreview() {
     OrderSummarySection(
         cartItems = listOf<CartItem>(
             CartItem(nome = "Item 1", precoTotal = 10.0),
-            CartItem(nome = "Item 2",  precoTotal = 20.0),
-            CartItem(nome = "Item 3",  precoTotal = 30.0),
-            CartItem(nome = "Item 4",  precoTotal = 40.0),
+            CartItem(nome = "Item 2", precoTotal = 20.0),
+            CartItem(nome = "Item 3", precoTotal = 30.0),
+            CartItem(nome = "Item 4", precoTotal = 40.0),
         ),
         freight = 0.0,
         modifier = Modifier.padding(16.dp)
     )
-
 }

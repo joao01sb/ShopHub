@@ -8,7 +8,7 @@ class ClearSearchUseCase(
 ) {
 
     suspend operator fun invoke(userId: String, query: String) : DomainResult<Unit> {
-        return when(val result = recentSearchRepository.clearRecentSearches(userId, query)) {
+        return when (val result = recentSearchRepository.clearRecentSearches(userId, query)) {
             is DomainResult.Success -> result
             is DomainResult.Error -> result
         }

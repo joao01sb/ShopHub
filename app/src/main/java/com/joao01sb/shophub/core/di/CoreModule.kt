@@ -30,7 +30,6 @@ object CoreModule {
         placeOrder: PlaceOrderUseCase
     ): CartManager = CartManager(add, remove, get, clear, placeOrder)
 
-
     @Provides
     fun provideAuthManager(
         register: RegisterUseCase,

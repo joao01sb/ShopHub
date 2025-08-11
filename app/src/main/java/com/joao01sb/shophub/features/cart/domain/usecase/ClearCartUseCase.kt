@@ -8,7 +8,7 @@ class ClearCartUseCase(
 ) {
 
     suspend operator fun invoke(userId: String) : DomainResult<Unit> {
-        return when(val result = cartRepository.clearCart(userId)) {
+        return when (val result = cartRepository.clearCart(userId)) {
             is DomainResult.Success -> result
             is DomainResult.Error -> result
         }

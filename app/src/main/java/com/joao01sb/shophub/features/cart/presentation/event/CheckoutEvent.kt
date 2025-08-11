@@ -1,7 +1,5 @@
 package com.joao01sb.shophub.features.cart.presentation.event
 
-import com.joao01sb.shophub.features.auth.presentation.event.AuthEvent
-
 sealed class CheckoutEvent {
     data class CardNumberChanged(val number: String) : CheckoutEvent()
     data class CardNameChanged(val name: String) : CheckoutEvent()

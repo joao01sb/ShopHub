@@ -2,7 +2,6 @@ package com.joao01sb.shophub.core.result.firebase
 
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuthException
-import com.joao01sb.shophub.core.result.firebase.FirebaseResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

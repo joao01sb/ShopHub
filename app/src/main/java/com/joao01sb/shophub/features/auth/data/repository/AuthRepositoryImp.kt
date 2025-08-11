@@ -1,20 +1,23 @@
 package com.joao01sb.shophub.features.auth.data.repository
 
-import com.google.firebase.firestore.FirebaseFirestore
 import com.joao01sb.shophub.core.error.ErrorType
 import com.joao01sb.shophub.core.result.DomainResult
-import com.joao01sb.shophub.core.result.DomainResult.*
+import com.joao01sb.shophub.core.result.DomainResult.Error
+import com.joao01sb.shophub.core.result.DomainResult.Success
 import com.joao01sb.shophub.core.result.firebase.FirebaseResult
 import com.joao01sb.shophub.features.auth.domain.datasource.AuthRemoteDataSource
 import com.joao01sb.shophub.features.auth.domain.repository.AuthRepository
-import kotlinx.coroutines.tasks.await
 
 class AuthRepositoryImp(
     private val dataSource: AuthRemoteDataSource
 ) : AuthRepository {
 
-    override suspend fun register(email: String, password: String, name: String) : DomainResult<Unit> {
-        return when(val result = dataSource.registerUser(email, password)) {
+    override suspend fun register(
+        email: String,
+        password: String,
+        name: String
+    ) : DomainResult<Unit> {
+        return when (val result = dataSource.registerUser(email, password)) {
             is FirebaseResult.AuthError -> DomainResult.Error(
                 message = result.message,
                 type = ErrorType.AUTHENTICATION
@@ -31,7 +34,10 @@ class AuthRepositoryImp(
         }
     }
 
-    override suspend fun login(email: String, password: String) : DomainResult<Unit> {
+    override suspend fun login(
+        email: String,
+        password: String
+    ) : DomainResult<Unit> {
         return when (val result = dataSource.login(email, password)) {
             is FirebaseResult.Success -> DomainResult.Success(Unit)
             is FirebaseResult.FirebaseError -> DomainResult.Error(

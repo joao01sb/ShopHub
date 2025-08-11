@@ -11,30 +11,48 @@ class RecentSearchRepositoryImp(
     private val recentSearchDataSource: RecentSearchDataSource
 ) : RecentSearchRepository {
 
-    override suspend fun insert(recentSearch: RecentSearchEntity) : DomainResult<Unit> {
-        return when(val result = recentSearchDataSource.insert(recentSearch)) {
-            is DatabaseResult.DatabaseError -> DomainResult.Error(result.exception.message?: "Unknown error", ErrorType.DATABASE)
+    override suspend fun insert(recentSearch: RecentSearchEntity): DomainResult<Unit> {
+        return when (val result = recentSearchDataSource.insert(recentSearch)) {
+            is DatabaseResult.DatabaseError -> DomainResult.Error(
+                result.exception.message ?: "Unknown error",
+                ErrorType.DATABASE
+            )
+
             is DatabaseResult.Success -> DomainResult.Success(Unit)
-            is DatabaseResult.UnknownError -> DomainResult.Error(result.exception.message?: "Unknown error", ErrorType.UNKNOWN)
+            is DatabaseResult.UnknownError -> DomainResult.Error(
+                result.exception.message ?: "Unknown error",
+                ErrorType.UNKNOWN
+            )
         }
     }
 
     override suspend fun getRecentSearches(userId: String): DomainResult<List<RecentSearchEntity>> {
-        return when(val result = recentSearchDataSource.getRecentSearches(userId)) {
-            is DatabaseResult.DatabaseError -> DomainResult.Error(result.exception.message?: "Unknown error", ErrorType.DATABASE)
+        return when (val result = recentSearchDataSource.getRecentSearches(userId)) {
+            is DatabaseResult.DatabaseError -> DomainResult.Error(
+                result.exception.message ?: "Unknown error", ErrorType.DATABASE
+            )
+
             is DatabaseResult.Success -> {
                 val data = result.data
                 DomainResult.Success(data)
             }
-            is DatabaseResult.UnknownError -> DomainResult.Error(result.exception.message?: "Unknown error", ErrorType.UNKNOWN)
+
+            is DatabaseResult.UnknownError -> DomainResult.Error(
+                result.exception.message ?: "Unknown error", ErrorType.UNKNOWN
+            )
         }
     }
 
     override suspend fun clearRecentSearches(userId: String, query: String): DomainResult<Unit> {
-        return when(val result = recentSearchDataSource.clearRecentSearches(userId, query)) {
-            is DatabaseResult.DatabaseError -> DomainResult.Error(result.exception.message?: "Unknown error", ErrorType.DATABASE)
+        return when (val result = recentSearchDataSource.clearRecentSearches(userId, query)) {
+            is DatabaseResult.DatabaseError -> DomainResult.Error(
+                result.exception.message ?: "Unknown error", ErrorType.DATABASE
+            )
+
             is DatabaseResult.Success -> DomainResult.Success(Unit)
-            is DatabaseResult.UnknownError -> DomainResult.Error(result.exception.message?: "Unknown error", ErrorType.UNKNOWN)
+            is DatabaseResult.UnknownError -> DomainResult.Error(
+                result.exception.message ?: "Unknown error", ErrorType.UNKNOWN
+            )
         }
     }
 

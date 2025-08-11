@@ -21,7 +21,7 @@ data class Order(
             val date = Date(timestamp)
             val yearFormat = SimpleDateFormat("yyyy", Locale.getDefault())
             val year = yearFormat.format(date)
-            val sequentialNumber = String.format(Locale.getDefault(),"%03d", (timestamp % 1000))
+            val sequentialNumber = String.format(Locale.getDefault(), "%03d", (timestamp % 1000))
             return "#ORD-$year-$sequentialNumber"
         }
     }

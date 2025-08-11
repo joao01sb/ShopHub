@@ -3,7 +3,6 @@ package com.joao01sb.shophub.features.orders.data.repository
 import com.joao01sb.shophub.core.domain.model.Order
 import com.joao01sb.shophub.core.error.ErrorType
 import com.joao01sb.shophub.core.result.DomainResult
-import com.joao01sb.shophub.core.result.DomainResult.*
 import com.joao01sb.shophub.core.result.firebase.FirebaseResult
 import com.joao01sb.shophub.features.orders.domain.datasource.RemoteOrdersDataSource
 import com.joao01sb.shophub.features.orders.domain.repository.OrdersRepository
@@ -13,7 +12,7 @@ class OrdersRepositoryImp(
 ) : OrdersRepository {
 
     override suspend fun getOrders(userId: String): DomainResult<List<Order>> {
-        return when(val result = dataSourceImp.getOrders(userId)) {
+        return when (val result = dataSourceImp.getOrders(userId)) {
             is FirebaseResult.AuthError -> DomainResult.Error(
                 message = result.message,
                 type = ErrorType.AUTHENTICATION
@@ -38,24 +37,24 @@ class OrdersRepositoryImp(
         userId: String,
         id: String
     ): DomainResult<Order?> {
-        when(val result = dataSourceImp.getOrderById(userId, id)) {
+        return when (val result = dataSourceImp.getOrderById(userId, id)) {
             is FirebaseResult.AuthError -> {
-                return DomainResult.Error(
+                DomainResult.Error(
                     message = result.message,
                     type = ErrorType.AUTHENTICATION
                 )
             }
             is FirebaseResult.FirebaseError -> {
-                return DomainResult.Error(
+                DomainResult.Error(
                     message = result.message,
                     type = ErrorType.DATABASE
                 )
             }
             is FirebaseResult.Success -> {
-                return DomainResult.Success(result.data)
+                DomainResult.Success(result.data)
             }
             is FirebaseResult.UnknownError -> {
-                return DomainResult.Error(
+                DomainResult.Error(
                     message = "Fetch order failed: ${result.exception.message}",
                     type = ErrorType.UNKNOWN
                 )

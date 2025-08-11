@@ -1,6 +1,5 @@
 package com.joao01sb.shophub.core.result.network
 
-import com.joao01sb.shophub.core.result.network.ApiResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

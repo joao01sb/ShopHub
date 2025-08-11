@@ -1,7 +1,6 @@
 package com.joao01sb.shophub.features.cart.domain.datasource
 
 import com.joao01sb.shophub.core.domain.model.CartItem
-import com.joao01sb.shophub.core.result.DomainResult
 import com.joao01sb.shophub.core.result.firebase.FirebaseResult
 import com.joao01sb.shophub.features.cart.domain.model.CheckoutInfo
 import kotlinx.coroutines.flow.Flow

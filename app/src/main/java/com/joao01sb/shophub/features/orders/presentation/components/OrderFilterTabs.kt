@@ -7,9 +7,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.joao01sb.shophub.core.domain.enums.OrderFilter
+import com.joao01sb.shophub.core.utils.ConstantsFloat
+import com.joao01sb.shophub.sharedui.theme.BackgroundLightGray
 
 @Composable
 fun OrderFilterTabs(
@@ -20,7 +21,7 @@ fun OrderFilterTabs(
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                Color(0xFFF8F9FA),
+                BackgroundLightGray,
                 RoundedCornerShape(8.dp)
             )
             .padding(4.dp)
@@ -29,7 +30,7 @@ fun OrderFilterTabs(
             FilterTab(
                 title = filter.displayName,
                 isSelected = selectedFilter == filter,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(ConstantsFloat.const_10),
                 onClick = { onFilterSelected(filter) }
             )
         }

@@ -17,10 +17,10 @@ class RegisterUseCase(
             )
         }
 
-        when (val authResult = repository.register(email, password, name)) {
+        return when (val authResult = repository.register(email, password, name)) {
             is DomainResult.Success -> {
                 val uid = repository.getUserId()
-                return if (uid != null) {
+                if (uid != null) {
                     when (val userResult = repository.saveUser(uid, email, name)) {
                         is DomainResult.Success -> DomainResult.Success(Unit)
                         is DomainResult.Error -> {
@@ -35,7 +35,7 @@ class RegisterUseCase(
                     )
                 }
             }
-            is DomainResult.Error -> return authResult
+            is DomainResult.Error -> authResult
         }
     }
 

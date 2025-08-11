@@ -1,4 +1,4 @@
-package com.joao01sb.shophub.shared_ui.components
+package com.joao01sb.shophub.sharedui.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,7 +32,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 
-
 @Composable
 fun SearchProductBar(
     query: String,
@@ -41,10 +40,10 @@ fun SearchProductBar(
     placeholder: String = "Search products...",
     modifier: Modifier = Modifier
 ) {
-    
+
     val currentFocus = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
-    
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -61,9 +60,9 @@ fun SearchProductBar(
                 tint = MaterialTheme.colorScheme.onSurface
             )
         }
-        
+
         Spacer(modifier = Modifier.width(8.dp))
-        
+
         TextField(
             value = if (query.isBlank()) {
                 TextFieldValue("")

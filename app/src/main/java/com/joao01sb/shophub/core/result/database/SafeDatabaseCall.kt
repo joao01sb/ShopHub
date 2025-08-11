@@ -1,6 +1,5 @@
 package com.joao01sb.shophub.core.result.database
 
-import com.joao01sb.shophub.core.result.database.DatabaseResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

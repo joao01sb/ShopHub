@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.joao01sb.shophub.sharedui.theme.PrimaryBlue
 
 @Composable
 fun OrderSection(
@@ -49,12 +50,12 @@ fun OrderSection(
                     text = title,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF4285F4)
+                    color = PrimaryBlue
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             content()
         }
     }

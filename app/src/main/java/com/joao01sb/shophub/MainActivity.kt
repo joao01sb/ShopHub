@@ -27,8 +27,8 @@ import com.joao01sb.shophub.core.navigation.NavigationGraph
 import com.joao01sb.shophub.core.navigation.Routes
 import com.joao01sb.shophub.core.navigation.route
 import com.joao01sb.shophub.features.auth.presentation.viewmodel.AuthViewModel
-import com.joao01sb.shophub.shared_ui.components.BottomNavigationBarComp
-import com.joao01sb.shophub.shared_ui.theme.ShopHubTheme
+import com.joao01sb.shophub.sharedui.components.BottomNavigationBarComp
+import com.joao01sb.shophub.sharedui.theme.ShopHubTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

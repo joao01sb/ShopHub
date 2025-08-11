@@ -2,7 +2,14 @@ package com.joao01sb.shophub.core.utils
 
 import androidx.compose.ui.graphics.Color
 import com.joao01sb.shophub.core.domain.enums.OrderStatus
-import java.util.Locale
+import com.joao01sb.shophub.sharedui.theme.CancelledBackgroundColor
+import com.joao01sb.shophub.sharedui.theme.CancelledTextColor
+import com.joao01sb.shophub.sharedui.theme.CompletedBackgroundColor
+import com.joao01sb.shophub.sharedui.theme.CompletedTextColor
+import com.joao01sb.shophub.sharedui.theme.PendingBackgroundColor
+import com.joao01sb.shophub.sharedui.theme.PendingTextColor
+import com.joao01sb.shophub.sharedui.theme.ProcessingBackgroundColor
+import com.joao01sb.shophub.sharedui.theme.ProcessingTextColor
 import java.util.Locale.getDefault
 
 fun getCategoryIcon(category: String): String {
@@ -18,19 +25,19 @@ fun getCategoryIcon(category: String): String {
 
 fun getStatusBackgroundColor(status: OrderStatus): Color {
     return when (status) {
-        OrderStatus.COMPLETED -> Color(0xFFD4EDDA)
-        OrderStatus.PENDING -> Color(0xFFFFF3CD)
-        OrderStatus.PROCESSING -> Color(0xFFCCE7FF)
-        OrderStatus.CANCELLED -> Color(0xFFF8D7DA)
+        OrderStatus.COMPLETED -> CompletedBackgroundColor
+        OrderStatus.PENDING -> PendingBackgroundColor
+        OrderStatus.PROCESSING -> ProcessingBackgroundColor
+        OrderStatus.CANCELLED -> CancelledBackgroundColor
     }
 }
 
 fun getStatusTextColor(status: OrderStatus): Color {
     return when (status) {
-        OrderStatus.COMPLETED -> Color(0xFF155724)
-        OrderStatus.PENDING -> Color(0xFF856404)
-        OrderStatus.PROCESSING -> Color(0xFF004085)
-        OrderStatus.CANCELLED -> Color(0xFF721C24)
+        OrderStatus.COMPLETED -> CompletedTextColor
+        OrderStatus.PENDING -> PendingTextColor
+        OrderStatus.PROCESSING -> ProcessingTextColor
+        OrderStatus.CANCELLED -> CancelledTextColor
     }
 }
 

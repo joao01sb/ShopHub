@@ -15,13 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.joao01sb.shophub.core.data.mock.MockOrders
-import com.joao01sb.shophub.core.domain.model.Order
+import com.joao01sb.shophub.core.utils.ConstantsFloat
 import com.joao01sb.shophub.features.orders.presentation.components.OrderItemsSection
 import com.joao01sb.shophub.features.orders.presentation.components.OrderStatusSection
 import com.joao01sb.shophub.features.orders.presentation.components.PaymentInfoSection
 import com.joao01sb.shophub.features.orders.presentation.components.PersonalInfoSection
 import com.joao01sb.shophub.features.orders.presentation.state.OrderDetailsUiState
-import com.joao01sb.shophub.shared_ui.components.TopAppBarCustom
+import com.joao01sb.shophub.sharedui.components.TopAppBarCustom
 
 @Composable
 fun OrderDetailsScreen(
@@ -37,7 +37,7 @@ fun OrderDetailsScreen(
             onNavigationClick = onBackClick
         )
 
-        when(orderDetalsState) {
+        when (orderDetalsState) {
             is OrderDetailsUiState.Error -> {
                 Column(
                     modifier = Modifier.fillMaxSize(),
@@ -61,7 +61,7 @@ fun OrderDetailsScreen(
             }
             is OrderDetailsUiState.Success -> {
                 LazyColumn(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(ConstantsFloat.const_10)
                         .padding(horizontal = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding = PaddingValues(vertical = 16.dp),

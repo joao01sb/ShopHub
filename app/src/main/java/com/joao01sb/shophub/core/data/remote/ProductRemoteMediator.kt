@@ -31,39 +31,64 @@ class ProductRemoteMediator @Inject constructor(
         state: PagingState<Int, ProductEntity>
     ): MediatorResult {
         return try {
-            val currentPage = when (loadType) {
-                LoadType.REFRESH -> {
-                    val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
-                    remoteKeys?.nextKey?.minus(1) ?: 0
-                }
-                LoadType.PREPEND -> {
-                    val remoteKeys = getRemoteKeyForFirstItem(state)
-                    val prevKey = remoteKeys?.prevKey
-                    prevKey ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
-                }
-                LoadType.APPEND -> {
-                    val remoteKeys = getRemoteKeyForLastItem(state)
-                    val nextKey = remoteKeys?.nextKey
-                    nextKey ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
-                }
-            }
-
-            resultProducts(currentPage, state, loadType)
-
+            resultProducts(state, loadType)
         } catch (e: IOException) {
             MediatorResult.Error(e)
         } catch (e: HttpException) {
             MediatorResult.Error(e)
         } catch (e: Exception) {
-            e.printStackTrace()
             MediatorResult.Error(e)
         }
     }
 
     private suspend fun resultProducts(
-        currentPage: Int,
         state: PagingState<Int, ProductEntity>,
         loadType: LoadType
+    ): MediatorResult {
+        val pageResult = getPageForLoadType(state, loadType)
+
+        return if (pageResult.endPagination) {
+            MediatorResult.Success(endOfPaginationReached = true)
+        } else {
+            loadProductsFromRemote(state, loadType, pageResult.page)
+        }
+    }
+
+    private suspend fun getPageForLoadType(
+        state: PagingState<Int, ProductEntity>,
+        loadType: LoadType
+    ): PageResult {
+        return when (loadType) {
+            LoadType.REFRESH -> {
+                val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
+                val page = remoteKeys?.nextKey?.minus(1) ?: 0
+                PageResult(page, false)
+            }
+            LoadType.PREPEND -> {
+                val remoteKeys = getRemoteKeyForFirstItem(state)
+                val prevKey = remoteKeys?.prevKey
+                if (prevKey == null) {
+                    PageResult(0, remoteKeys != null)
+                } else {
+                    PageResult(prevKey, false)
+                }
+            }
+            LoadType.APPEND -> {
+                val remoteKeys = getRemoteKeyForLastItem(state)
+                val nextKey = remoteKeys?.nextKey
+                if (nextKey == null) {
+                    PageResult(0, remoteKeys != null)
+                } else {
+                    PageResult(nextKey, false)
+                }
+            }
+        }
+    }
+
+    private suspend fun loadProductsFromRemote(
+        state: PagingState<Int, ProductEntity>,
+        loadType: LoadType,
+        currentPage: Int
     ): MediatorResult {
         val skip = currentPage * state.config.pageSize
 
@@ -101,17 +126,9 @@ class ProductRemoteMediator @Inject constructor(
                 MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
             }
 
-            is ApiResult.NetworkError -> {
-                MediatorResult.Error(response.exception)
-            }
-
-            is ApiResult.HttpError -> {
-                MediatorResult.Error(IOException("HTTP ${response.code}: ${response.message}"))
-            }
-
-            is ApiResult.UnknownError -> {
-                MediatorResult.Error(response.exception)
-            }
+            is ApiResult.NetworkError -> MediatorResult.Error(response.exception)
+            is ApiResult.HttpError -> MediatorResult.Error(IOException("HTTP ${response.code}: ${response.message}"))
+            is ApiResult.UnknownError -> MediatorResult.Error(response.exception)
         }
     }
 
@@ -151,4 +168,6 @@ class ProductRemoteMediator @Inject constructor(
                 }
             }
     }
+
+    private data class PageResult(val page: Int, val endPagination: Boolean)
 }
