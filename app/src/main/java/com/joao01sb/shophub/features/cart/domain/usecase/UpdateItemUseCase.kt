@@ -9,7 +9,8 @@ class UpdateItemUseCase(
 ) {
 
     suspend operator fun invoke(userId: String, item: CartItem, quantity: Int) : DomainResult<Unit> {
-        return when (val result = cartRepository.updateItem(userId, item)) {
+        val updatedItem = item.copy(quantity = quantity)
+        return when (val result = cartRepository.updateItem(userId, updatedItem)) {
             is DomainResult.Success -> result
             is DomainResult.Error -> result
         }
