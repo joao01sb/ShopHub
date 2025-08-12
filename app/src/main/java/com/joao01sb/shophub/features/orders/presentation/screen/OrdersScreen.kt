@@ -105,13 +105,6 @@ fun OrdersScreen(
                             .fillMaxSize()
                             .background(BackgroundLightGray)
                     ) {
-                        TopAppBarCustom(
-                            title = "My Orders",
-                            onNavigationClick = onBackClick,
-                            isLogoutVisible = true,
-                            onLogoutClick = onLogoutClick
-                        )
-
                         Column(
                             modifier = Modifier.padding(8.dp)
                         ) {
