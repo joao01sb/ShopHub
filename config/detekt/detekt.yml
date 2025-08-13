@@ -65,6 +65,9 @@ complexity:
     thresholdInInterfaces: 12
     thresholdInObjects: 12
     thresholdInEnums: 5
+    excludes:
+      - '**/test/**'
+      - '**/androidTest/**'
 
 coroutines:
   active: true
@@ -242,6 +245,9 @@ naming:
     functionPattern: '[a-z][a-zA-Z0-9]*'
     excludeClassPattern: '$^'
     ignoreAnnotated: ['Composable']
+    excludes:
+      - '**/test/**'
+      - '**/androidTest/**'
   FunctionParameterNaming:
     active: true
     parameterPattern: '[a-z][A-Za-z0-9]*'
