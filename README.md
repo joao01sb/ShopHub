@@ -79,7 +79,7 @@ features/
 
 1. **Clone the repository**:
 ```bash
-git clone https://github.com/your-username/ShopHub.git
+git clone https://github.com/joao01sb/ShopHub.git
 cd ShopHub
 ```
 
