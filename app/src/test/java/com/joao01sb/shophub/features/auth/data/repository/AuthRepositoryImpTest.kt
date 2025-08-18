@@ -36,4 +36,23 @@ class AuthRepositoryImpTest {
 
     }
 
+    @Test
+    fun givenInvalidCredentials_whenRegister_thenFailure() = runTest {
+        val email = "test@email.com"
+        val password = "password123"
+        val errorMessage = "Invalid credentials"
+
+        coEvery { authRemoteDataSource.registerUser(email, password) } returns
+                FirebaseResult.UnknownError(Exception(errorMessage))
+
+        val result = authRemoteDataSource.registerUser(email, password)
+
+        assert(result is FirebaseResult.UnknownError)
+
+        assert((result as FirebaseResult.UnknownError).exception.message == errorMessage)
+
+        coVerify(exactly = 1) { authRemoteDataSource.registerUser(email, password) }
+
+    }
+
 }
