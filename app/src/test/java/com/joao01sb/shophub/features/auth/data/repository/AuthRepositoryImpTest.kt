@@ -55,4 +55,24 @@ class AuthRepositoryImpTest {
 
     }
 
+    @Test
+    fun givenValidCredentials_whenRegister_thenNetworkError() = runTest {
+        val email = "test@email.com"
+        val password = "password123"
+        val errorMessage = "Network error"
+        val codeError = "500"
+
+        coEvery { authRemoteDataSource.registerUser(email, password) } returns
+                FirebaseResult.FirebaseError(codeError, errorMessage)
+
+        val result = authRemoteDataSource.registerUser(email, password)
+
+        assert(result is FirebaseResult.FirebaseError)
+
+        assert((result as FirebaseResult.FirebaseError).message == errorMessage)
+
+        coVerify(exactly = 1) { authRemoteDataSource.registerUser(email, password) }
+
+    }
+
 }
