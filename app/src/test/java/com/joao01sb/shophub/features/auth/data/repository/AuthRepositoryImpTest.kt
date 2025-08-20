@@ -75,4 +75,22 @@ class AuthRepositoryImpTest {
 
     }
 
+    @Test
+    fun givenValidCredentials_whenLogin_thenSuccess() = runTest {
+        val email = "test@email.com"
+        val password = "password123"
+        val expectedUid = "Uid123"
+        val expectedName = "Test User"
+
+        coEvery { authRemoteDataSource.login(email, password) } returns FirebaseResult.Success(Unit)
+        coEvery { authRemoteDataSource.saveUser(expectedUid, email, expectedName) } returns FirebaseResult.Success(Unit)
+
+        val result = authRemoteDataSource.login(email, password)
+
+        assert(result is FirebaseResult.Success)
+
+        coVerify(exactly = 1) { authRemoteDataSource.login(email, password) }
+
+    }
+
 }
