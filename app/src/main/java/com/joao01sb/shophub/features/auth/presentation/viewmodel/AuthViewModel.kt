@@ -149,6 +149,8 @@ class AuthViewModel @Inject constructor(
     }
 
     fun clearState() {
-        _uiState.value = AuthUiState()
+        _uiState.update {
+            AuthUiState()
+        }
     }
 }
