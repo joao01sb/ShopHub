@@ -6,14 +6,18 @@ import com.joao01sb.shophub.core.error.ErrorType
 import com.joao01sb.shophub.core.result.DomainResult
 import com.joao01sb.shophub.features.auth.presentation.event.AuthEvent
 import com.joao01sb.shophub.features.auth.presentation.event.AuthUiEvent
-import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.unmockkAll
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -21,22 +25,27 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class AuthViewModelTest {
 
-    private val testDispatcher = StandardTestDispatcher()
+    private lateinit var testDispatcher: TestDispatcher
 
     private lateinit var viewModel: AuthViewModel
 
-    private val mockAuthManager: AuthManager = mockk(relaxed = true)
+    private lateinit var mockAuthManager: AuthManager
 
     @Before
     fun setUp() {
-        MockKAnnotations.init(this)
+        clearAllMocks()
+        testDispatcher = StandardTestDispatcher()
+        Dispatchers.setMain(testDispatcher)
+        mockAuthManager = mockk(relaxed = true)
         every { mockAuthManager.isUserLoggedIn() } returns Result.success(false)
         viewModel = AuthViewModel(mockAuthManager)
     }
 
     @After
     fun tearDown() {
+        Dispatchers.resetMain()
         clearAllMocks()
+        unmockkAll()
     }
 
     @Test
@@ -105,8 +114,7 @@ class AuthViewModelTest {
         every { mockAuthManager.getCurrentUserId() } returns Result.success(userId)
         every { mockAuthManager.isUserLoggedIn() } returns Result.success(true)
 
-        coEvery { mockAuthManager.registerUser(any(), any(), any()) } returns
-                DomainResult.Success(Unit)
+        coEvery { mockAuthManager.registerUser(any(), any(), any()) } returns DomainResult.Success(Unit)
 
         viewModel.uiState.test {
 
