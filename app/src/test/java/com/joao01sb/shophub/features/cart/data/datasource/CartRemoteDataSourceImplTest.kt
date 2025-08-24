@@ -11,7 +11,6 @@ import io.mockk.unmockkAll
 import org.junit.After
 import org.junit.Before
 
-
 class CartRemoteDataSourceImplTest {
 
     private val firebaseAuth = mockk<FirebaseAuth>(relaxed = true)
@@ -25,14 +24,12 @@ class CartRemoteDataSourceImplTest {
     @Before
     fun setup() {
         clearAllMocks()
-        cartRemoteDataSource = CartRemoteDataSourceImpl(firestore,firebaseAuth)
+        cartRemoteDataSource = CartRemoteDataSourceImpl(firestore, firebaseAuth)
     }
 
     @After
     fun tearDown() {
         unmockkAll()
     }
-
-
 
 }
