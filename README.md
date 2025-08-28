@@ -11,6 +11,16 @@ A modern e-commerce Android application built with Jetpack Compose, following Cl
 - **Product Search**: Search system with search history
 - **Bottom Navigation**: Intuitive navigation between main sections
 
+## 📱 Screenshots
+
+| Login | Home | Search | Product Details |
+|-------|------|--------|----------------|
+| ![Login](prints/Login.png) | ![Home](prints/home.png) | ![Search](prints/search.png) | ![Details](prints/DetailsProduct.png) |
+
+| Shopping Cart | Checkout | Orders | Order Details |
+|--------------|----------|--------|---------------|
+| ![Cart](prints/ShoppingCart.png) | ![Checkout](prints/Checkout.png) | ![Orders](prints/Orders.png) | ![Order Details](prints/DetailsOrder.png) |
+
 ## 🏗️ Architecture
 
 The project follows **Clean Architecture** principles with:
