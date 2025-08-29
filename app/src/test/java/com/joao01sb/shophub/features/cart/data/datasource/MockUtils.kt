@@ -1,8 +1,9 @@
 package com.joao01sb.shophub.features.cart.data.datasource
 
 import com.joao01sb.shophub.core.domain.model.CartItem
+import com.joao01sb.shophub.features.cart.domain.model.CheckoutInfo
 
-object MockItens {
+object MockUtils {
     val mockCartItems = listOf(
         CartItem(
             productId = 1,
@@ -95,4 +96,14 @@ object MockItens {
             urlImage = "https://example.com/rtx3060.jpg"
         )
     )
+
+    val info = CheckoutInfo(
+        numberCard = "1234 5678 9012 3456",
+        nameCard = "João Silva",
+        dateCard = "12/26",
+        cvvCard = "123",
+        fullName = "João Silva",
+        phoneNumber = "123456789",
+    )
+
 }
