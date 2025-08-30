@@ -97,7 +97,9 @@ class CheckoutViewModel @Inject constructor(
                         }
                         placerOrder()
                     } else {
-                        _checkoutUiEvent.tryEmit(CheckoutUiEvent.Error("invalid checkout information"))
+                        viewModelScope.launch {
+                            _checkoutUiEvent.tryEmit(CheckoutUiEvent.Error("invalid checkout information"))
+                        }
                     }
                 }
             }
@@ -124,7 +126,9 @@ class CheckoutViewModel @Inject constructor(
                     _checkoutState.update {
                         it.copy(isLoading = false)
                     }
-                    _checkoutUiEvent.tryEmit(Error(result.message ?: "Unknow error"))
+                    viewModelScope.launch {
+                        _checkoutUiEvent.tryEmit(Error(result.message ?: "Unknow error"))
+                    }
                 }
             }
         } catch (e: Exception) {
