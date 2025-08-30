@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joao01sb.shophub.core.domain.manager.AuthManager
 import com.joao01sb.shophub.core.domain.manager.CartManager
+import com.joao01sb.shophub.core.result.DomainResult
 import com.joao01sb.shophub.features.cart.presentation.event.CartEvent
 import com.joao01sb.shophub.features.cart.presentation.state.CartUiEvent
 import com.joao01sb.shophub.features.cart.presentation.state.CartUiState
@@ -66,7 +67,10 @@ class CartViewModel @Inject constructor(
             is CartEvent.UpdateCartItem -> {
                 userId?.let {
                     viewModelScope.launch {
-                        cartManager.addItem(it, event.cartItem, event.quantity)
+                        val result = cartManager.addItem(it, event.cartItem, event.quantity)
+                        if (result is DomainResult.Error) {
+                            _cartItems.update { CartUiState.Error(result.message) }
+                        }
                     }
                 }
             }
@@ -74,7 +78,10 @@ class CartViewModel @Inject constructor(
             is CartEvent.RemoveCartItem -> {
                 userId?.let {
                     viewModelScope.launch {
-                        cartManager.removeItem(it, event.cartItem.productId.toString())
+                        val result = cartManager.removeItem(it, event.cartItem.productId.toString())
+                        if (result is DomainResult.Error) {
+                            _cartItems.update { CartUiState.Error(result.message) }
+                        }
                     }
                 }
             }
@@ -82,7 +89,10 @@ class CartViewModel @Inject constructor(
             is CartEvent.ClearCart -> {
                 userId?.let {
                     viewModelScope.launch {
-                        cartManager.clearCart(it)
+                        val result = cartManager.clearCart(it)
+                        if (result is DomainResult.Error) {
+                            _cartItems.update { CartUiState.Error(result.message) }
+                        }
                     }
                 }
             }
