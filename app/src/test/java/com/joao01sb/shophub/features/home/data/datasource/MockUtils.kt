@@ -1,5 +1,6 @@
 package com.joao01sb.shophub.features.home.data.datasource
 
+import com.joao01sb.shophub.core.data.local.entities.RecentSearchEntity
 import com.joao01sb.shophub.core.data.local.entities.RemoteKeysEntity
 import com.joao01sb.shophub.core.data.remote.dto.ProductDto
 
@@ -63,6 +64,12 @@ object MockUtils {
             prevKey = 2,
             nextKey = null
         )
+    )
+
+    val recentSearches = listOf(
+        RecentSearchEntity("laptop", "user123"),
+        RecentSearchEntity("phone", "user123"),
+        RecentSearchEntity("headphones", "user123")
     )
 
 }
