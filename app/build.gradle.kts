@@ -125,6 +125,7 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.androidx.junit.ktx)
     testImplementation(libs.androidx.test.core.ktx)
+    testImplementation(libs.androidx.paging.testing)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
